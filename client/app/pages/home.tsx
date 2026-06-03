@@ -1,9 +1,7 @@
+import BetterDays from "~/components/home/better-days";
 import Explanation from "~/components/home/explanation";
 import HowItWorks from "~/components/home/how-it-works";
 import Jumbotron from "~/components/home/jumbotron";
-
-
-
 
 // TODO:
 // Login Page + connect tombol di jumbotron
@@ -21,7 +19,7 @@ export default function Home() {
             <Jumbotron />
             <Explanation />
             <HowItWorks />
-
+            <BetterDays />
         </div>
     )
 }

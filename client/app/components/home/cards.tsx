@@ -20,6 +20,7 @@ export default function Cards({icon: Icon, number, heading, paragraph}: Cards){
 
             <h5 className="text-center text-lg md:text-xl max-w-90">{paragraph}</h5>
             
+            
         </div>
     )
 } 

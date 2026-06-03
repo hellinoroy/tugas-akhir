@@ -1,3 +1,4 @@
+import { MoonIcon } from "@heroicons/react/24/outline"
 
 export default function Jumbotron() {
     return (
@@ -11,17 +12,18 @@ export default function Jumbotron() {
             </div>
             
             <div className="relative text-white text-center flex flex-col items-center gap-2">
+                <MoonIcon className="w-16 h-16 text-indigo-300 mx-auto mb-2 animate-pulse"/>
                 <h1 className="font-bold text-6xl">SleepWell</h1>
                 <h4 className="text-gray-400 text-2xl my-4">Transform your sleep, transform your life.</h4>
                 <div className="flex flex-row gap-5">
-                <button className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40">
-                    {/* Link to login page */}
-                    Login
-                </button>
-                <button className="cursor-pointer rounded-xl bg-purple-950 py-3 px-8 mt-4 self-center w-40">
-                    {/* Link to Whats SleepWell */}
-                    Learn More
-                </button>
+                    <button className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40">
+                        {/* Link to login page */}
+                        Login
+                    </button>
+                    <button className="cursor-pointer rounded-xl bg-purple-950 py-3 px-8 mt-4 self-center w-40">
+                        {/* Link to Whats SleepWell */}
+                        Learn More
+                    </button>
                 </div>
 
             </div>
