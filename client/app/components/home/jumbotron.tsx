@@ -1,4 +1,5 @@
 import { MoonIcon } from "@heroicons/react/24/outline"
+import { Link } from "react-router"
 
 export default function Jumbotron() {
     return (
@@ -16,14 +17,13 @@ export default function Jumbotron() {
                 <h1 className="font-bold text-6xl">SleepWell</h1>
                 <h4 className="text-gray-400 text-2xl my-4">Transform your sleep, transform your life.</h4>
                 <div className="flex flex-row gap-5">
-                    <button className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40">
-                        {/* Link to login page */}
+                    <Link className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40" to="/login">
                         Login
-                    </button>
-                    <button className="cursor-pointer rounded-xl bg-purple-950 py-3 px-8 mt-4 self-center w-40">
-                        {/* Link to Whats SleepWell */}
+                    </Link>
+                    <a className="cursor-pointer rounded-xl bg-purple-950 py-3 px-8 mt-4 self-center w-40" href="#explain">
+                        
                         Learn More
-                    </button>
+                    </a>
                 </div>
 
             </div>

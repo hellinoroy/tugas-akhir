@@ -1,6 +1,6 @@
 export default function Explanation() {
     return (
-        <section className="text-white flex flex-row items-center w-full gap-5 md:gap-4 xl:gap-50 p-10 max-w-6xl mx-auto">
+        <section className="text-white flex flex-row items-center w-full gap-5 md:gap-4 xl:gap-50 p-10 max-w-6xl mx-auto" id="explain">
             <div className="flex flex-col sm:w-1/2 gap-4">
                 <h2 className="font-bold text-2xl md:text-4xl">What Is SleepWell ?</h2>
                 <h5 className="text-justify text-lg md:text-xl">
