@@ -21,7 +21,6 @@ export default function Jumbotron() {
                         Login
                     </Link>
                     <a className="cursor-pointer rounded-xl bg-purple-950 py-3 px-8 mt-4 self-center w-40" href="#explain">
-                        
                         Learn More
                     </a>
                 </div>

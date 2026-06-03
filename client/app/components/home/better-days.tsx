@@ -1,4 +1,5 @@
 import { SunIcon } from "@heroicons/react/24/outline"
+import { Link } from "react-router"
 
 export default function BetterDays() {
     return (
@@ -8,10 +9,9 @@ export default function BetterDays() {
                 <h2 className="font-bold text-4xl">Wake Up to Better Days</h2>
                 <h5 className="text-lg md:text-xl">Start tracking your sleep today and discover patterns that will help you sleep better tommorow</h5>
 
-                <button className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40">
-                    {/* Link to login page */}
+                <Link className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40" to="/login">
                     Login
-                </button>
+                </Link>
             </div>
         </section>
     )
