@@ -14,7 +14,7 @@ export function meta() {
   ];
 }
 
-export default function Home() {
+export default function HomePage() {
     return (
         <div className="bg-gray-800">
             <Jumbotron />
