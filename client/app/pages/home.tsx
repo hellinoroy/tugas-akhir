@@ -16,7 +16,7 @@ export function meta() {
 
 export default function HomePage() {
     return (
-        <div className="bg-gray-800">
+        <div className="bg-gradient-to-b from-zinc-950 via-neutral-900 to-zinc-950">
             <Jumbotron />
             <Explanation />
             <HowItWorks />
