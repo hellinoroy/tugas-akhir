@@ -1,0 +1,9 @@
+client/.DS_Store
+client/.env
+client/node_modules/
+
+# React Router
+client/.react-router/
+client/build/
+
+server/.venv
