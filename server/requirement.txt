@@ -1,3 +1,4 @@
 FastAPI
 SQLAlchemy
 uvicorn
+dotenv

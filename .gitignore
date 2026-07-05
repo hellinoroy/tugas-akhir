@@ -7,3 +7,4 @@ client/.react-router/
 client/build/
 
 server/.venv
+server/.env
