@@ -1,4 +1,5 @@
-FastAPI
-SQLAlchemy
-uvicorn
+FastAPI[standard]
+sqlalchemy[postgresql]
+pwdlib[argon2]
+pyjwt
 dotenv
