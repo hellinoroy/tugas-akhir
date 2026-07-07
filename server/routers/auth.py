@@ -1,5 +1,4 @@
-from fastapi import (status, APIRouter, Depends)
-from fastapi import Depends
+from fastapi import Depends, Response, APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database import get_db
@@ -29,9 +28,10 @@ def create(body: RegisterRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
-def signin(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def signin(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db), ):
     return login(
-        db, 
+        response,
+        db,
         email=form_data.username,
         password=form_data.password,
     )

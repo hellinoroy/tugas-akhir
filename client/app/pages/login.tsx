@@ -1,7 +1,46 @@
 import { MoonIcon, EnvelopeIcon, LockClosedIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useState, useEffect } from "react";
 import { Link } from 'react-router';
+import axios from "axios";
+import { useNavigate } from "react-router";
 
 export default function Login() {
+
+
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    useEffect(() => {
+        setEmail('');
+        setPassword('');
+    }, []);
+
+
+    const navigate = useNavigate();
+
+    const handleLogin = async (e: React.SubmitEvent) => {
+        e.preventDefault();
+        const params = new URLSearchParams();
+        params.append('username', email);
+        params.append('password', password);
+        try {
+            const response = await axios.post(
+                import.meta.env.VITE_API_BASE_URL + "/auth/login",
+                params
+            );
+            navigate('/dashboard');
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                console.error("Server error:", error.response?.data.message);
+            } else {
+                console.error("Unexpected error:", error);
+            }
+        }
+    }
+
+
+
   return (
     <div className="bg-gradient-to-b from-zinc-950 via-neutral-900 to-zinc-950 w-screen h-screen flex justify-center items-center">
         <div className="w-full max-w-md flex flex-col justify-center">
@@ -16,7 +55,10 @@ export default function Login() {
                     <p className="text-zinc-200">Sign in to track your sleep journey</p>
                 </div>
 
-                <form className="space-y-6">
+                <form 
+                    className="space-y-6"                         
+                    onSubmit={handleLogin}
+                >
                     <div>
                         <label className="block text-sm font-medium text-zinc-200 mb-2">
                         Email Address
@@ -24,6 +66,7 @@ export default function Login() {
                         <div className="relative">
                         <EnvelopeIcon className="w-5 h-5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input 
+                            onChange={(e) => setEmail(e.target.value)}
                             type="email" 
                             placeholder="you@example.com"
                             className="w-full bg-zinc-900/50 border border-zinc-500/30 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-zinc-300/50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all"
@@ -42,7 +85,8 @@ export default function Login() {
                         </div>
                         <div className="relative">
                         <LockClosedIcon className="w-5 h-5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input 
+                        <input
+                            onChange={(e) => setPassword(e.target.value)}
                             type="password" 
                             placeholder="••••••••"
                             className="w-full bg-zinc-900/50 border border-zinc-500/30 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-zinc-300/50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all"
@@ -61,8 +105,8 @@ export default function Login() {
                         </label>
                     </div>
 
-                    <button 
-                        type="button"
+                    <button
+                        type="submit"
                         className="w-full bg-zinc-600 hover:bg-zinc-500 text-white py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-zinc-500/25"
                     >
                         Sign In

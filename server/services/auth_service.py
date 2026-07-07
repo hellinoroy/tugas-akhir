@@ -1,9 +1,7 @@
 from sqlalchemy.orm import Session
-from fastapi import Depends
 from database import get_db
 from models.user import User
-from fastapi import Depends, HTTPException, status
-
+from fastapi import  HTTPException, Response, status
 from security import (
     hash_password,
     verify_password,
@@ -48,14 +46,15 @@ def register(
     db.commit()
 
     return {
-        "message": "created"
+        "message": "User created"
     }
 
 def login(
+    response: Response,
     db: Session,
     email: str,
     password: str
-) -> dict:
+):
     user = (
         db.query(User)
         .filter(
@@ -74,8 +73,10 @@ def login(
         "sub": str(user.id)
     })
 
+    response.set_cookie(key="access_token", value=token)
+
     return {
-        "access_token": token,
+        "message": "Login success",
     }
 
 def get_current_user(
