@@ -8,3 +8,7 @@ client/build/
 
 server/.venv
 server/.env
+
+__pycache__/
+*.py[cod]
+*$py.class
