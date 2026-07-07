@@ -1,28 +1,22 @@
 import { MoonIcon, EnvelopeIcon, LockClosedIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from 'react-router';
 import axios from "axios";
 import { useNavigate } from "react-router";
 
 export default function Login() {
-
-
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    useEffect(() => {
-        setEmail('');
-        setPassword('');
-    }, []);
-
-
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+
+   
 
     const handleLogin = async (e: React.SubmitEvent) => {
         e.preventDefault();
         const params = new URLSearchParams();
         params.append('username', email);
+        params.append('password', password);
         params.append('password', password);
         try {
             const response = await axios.post(
@@ -67,6 +61,7 @@ export default function Login() {
                         <EnvelopeIcon className="w-5 h-5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input 
                             onChange={(e) => setEmail(e.target.value)}
+                            value={email}
                             type="email" 
                             placeholder="you@example.com"
                             className="w-full bg-zinc-900/50 border border-zinc-500/30 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-zinc-300/50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all"
@@ -87,6 +82,7 @@ export default function Login() {
                         <LockClosedIcon className="w-5 h-5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                             onChange={(e) => setPassword(e.target.value)}
+                            value={password}
                             type="password" 
                             placeholder="••••••••"
                             className="w-full bg-zinc-900/50 border border-zinc-500/30 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-zinc-300/50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent transition-all"

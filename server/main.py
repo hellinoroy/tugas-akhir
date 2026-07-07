@@ -1,3 +1,9 @@
+# TODO:
+#   notification/toast in frontend
+#   PRIORTY the prediction stuff
+#   PRIORTY them graph  
+#   account page
+#   
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
