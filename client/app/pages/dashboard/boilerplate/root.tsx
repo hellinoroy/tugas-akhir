@@ -6,7 +6,7 @@ import Sidebar from "./sidebar";
 
 export default function Boilerplate() {
   return (
-    <div>
+    <>
       <Header />
       <div className="flex flex-row">
         <Sidebar />
@@ -14,6 +14,6 @@ export default function Boilerplate() {
           <Outlet />
         </main>
       </div>
-    </div>
+    </>
   )
 }

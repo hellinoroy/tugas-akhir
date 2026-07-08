@@ -14,7 +14,8 @@ export default [
     route("forgot-password", "./pages/forgot-password.tsx"),
 
     route('dashboard', './pages/dashboard/boilerplate/root.tsx', [
-        index('./pages/dashboard/dashboard-home.tsx')
+        index('./pages/dashboard/home.tsx'),
+        route('predict', './pages/dashboard/predict.tsx')
     ])
 
     // catchall

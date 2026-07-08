@@ -9,9 +9,6 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-
-   
-
     const handleLogin = async (e: React.SubmitEvent) => {
         e.preventDefault();
         const params = new URLSearchParams();
@@ -32,8 +29,6 @@ export default function Login() {
             }
         }
     }
-
-
 
   return (
     <div className="bg-gradient-to-b from-zinc-950 via-neutral-900 to-zinc-950 w-screen h-screen flex justify-center items-center">
