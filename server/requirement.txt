@@ -3,3 +3,4 @@ sqlalchemy[postgresql]
 pwdlib[argon2]
 pyjwt
 dotenv
+joblib
