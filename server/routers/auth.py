@@ -7,7 +7,7 @@ from schemas.auth import RegisterRequest
 from services.auth_service import (register, login, get_current_user)
 
 router = APIRouter(
-    prefix="/auth",
+    prefix="/api/auth",
     tags=["auth"]
 )
 
@@ -24,7 +24,6 @@ def create(body: RegisterRequest, db: Session = Depends(get_db)):
         body.gender
     )
 
-
 @router.post("/login", status_code=status.HTTP_200_OK)
 def signin(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db), ):
     return login(
@@ -35,5 +34,5 @@ def signin(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
     )
 
 @router.get("/me", status_code=status.HTTP_200_OK)
-def validate(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db),):
+def validate(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     return get_current_user(token, db)

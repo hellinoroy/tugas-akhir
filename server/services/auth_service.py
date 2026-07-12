@@ -9,9 +9,6 @@ from security import (
     check_token
 )
 
-
-
-
 def register(
     db: Session,
     name:str,
@@ -69,14 +66,26 @@ def login(
             detail="Invalid credentials"
         )
 
-    token = create_token({
+    refresh_token = create_token(
+        {"sub": str(user.id)},
+        3600
+    )
+
+    access_token = create_token({
         "sub": str(user.id)
     })
 
-    response.set_cookie(key="access_token", value=token)
+    response.set_cookie(
+        key="refresh_token", 
+        value=refresh_token,     
+        httponly=True,
+        secure=False, 
+        samesite="lax"
+    )
 
     return {
         "message": "Login success",
+        "access_token": access_token
     }
 
 def get_current_user(
@@ -98,9 +107,10 @@ def get_current_user(
     if user is None:
         raise credentials_exception
     return {
-        "id": user.id,
         "name": user.name,
-        "email": user.email
+        "email": user.email,
+        "dob": user.dob,
+        "gender": user.gender
     }
 
 
