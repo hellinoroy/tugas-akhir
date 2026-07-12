@@ -3,7 +3,7 @@ from pydantic import BaseModel
 class PredictionRequest(BaseModel):
     age: int
     gender: int
-    caffeine: int
-    alcohol: int 
-    smoking: int
-    exercise: int
+    caffeine_consumption: int
+    alcohol_consumption: int 
+    smoking_status: int
+    exercise_frequency: int

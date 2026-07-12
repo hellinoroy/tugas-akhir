@@ -11,8 +11,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from schemas.ml import PredictionRequest
+import pandas as pd
 import joblib
-model = joblib.load("rf_model.joblib")
+
 
 from database import (Base, engine)
 
@@ -37,12 +38,18 @@ app.add_middleware(
 
 app.include_router(auth_router)
 
-
-@app.post('/predict')
-def predict(param: PredictionRequest):
-    arr = list(param.model_dump().values())
-
-    return { "message" : f'Hasil Prediksi {model.predict([arr])}'}
+model = joblib.load("rf_model.joblib")
+@app.post('/api/predict')
+def predict(data: PredictionRequest):
+    df = pd.DataFrame([data.model_dump(by_alias=True)])
+    prediction = int(model.predict(df)[0])
+    probability = model.predict_proba(df)[0].tolist()
+    
+    return { 
+        "message" : "",
+        "prediction": prediction,
+        "probability": probability
+    }
 
 
 # app.include_router(product_router)
