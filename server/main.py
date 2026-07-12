@@ -22,8 +22,6 @@ from routers.auth import (router as auth_router)
 # from routers.product_detail import (router as product_detail_router)
 # from routers.comment import (router as comment_router)
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
