@@ -1,7 +1,17 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { PencilSquareIcon, ChartPieIcon, PowerIcon } from "@heroicons/react/24/outline";
 
+
 export default function Sidebar() {
+    const navigate = useNavigate(); 
+
+    const handleLogout = () => {
+        localStorage.removeItem('access_token');
+        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        navigate('/')
+    }
+
+
     return (
         <aside className="h-[calc(100vh-4rem)] w-60 bg-teal-100 shrink-0">
             <nav className="flex flex-col h-full items-center pt-6 ">
@@ -29,6 +39,7 @@ export default function Sidebar() {
                 </NavLink>
                 
                 <a
+                    onClick={handleLogout}
                     href="#"
                     className="h-14 w-full mt-auto leading-[3.5rem] bg-red-600 text-white border-l-[2px] border-red-600 flex flex-row items-center font-bold text-xl"
                 >

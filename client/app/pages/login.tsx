@@ -18,8 +18,12 @@ export default function Login() {
         try {
             const response = await axios.post(
                 import.meta.env.VITE_API_BASE_URL + "/auth/login",
-                params
+                params,
+                {
+                    withCredentials: true
+                }
             );
+            localStorage.setItem('access_token', response.data.access_token);
             navigate('/dashboard');
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
