@@ -1,8 +1,8 @@
 """create feedback table
 
-Revision ID: efd7e6409e1d
-Revises: 6cfe6c732037
-Create Date: 2026-07-13 13:43:54.881378
+Revision ID: 20ea021ffe7d
+Revises: 878fca00b7b3
+Create Date: 2026-07-13 19:56:42.378442
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'efd7e6409e1d'
-down_revision: Union[str, Sequence[str], None] = '6cfe6c732037'
+revision: str = '20ea021ffe7d'
+down_revision: Union[str, Sequence[str], None] = '878fca00b7b3'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -24,10 +24,11 @@ def upgrade() -> None:
     op.create_table('feedbacks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('sleep_duration', sa.Integer(), nullable=False),
-    sa.Column('awakenings', sa.Integer(), nullable=False),
-    sa.Column('sleep_efficiency', sa.Float(), nullable=False),
-    sa.Column('classification', sa.String(), nullable=False),
+    sa.Column('caffeine_consumption', sa.Integer(), nullable=False),
+    sa.Column('alcohol_consumption', sa.Integer(), nullable=False),
+    sa.Column('smoking_status', sa.Integer(), nullable=False),
+    sa.Column('exercise_frequency', sa.Integer(), nullable=False),
+    sa.Column('prediction', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

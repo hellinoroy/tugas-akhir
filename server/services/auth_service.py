@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from database import get_db
 from models.user import User
+from schemas.auth import RegisterRequest
 from fastapi import  HTTPException, Response, status
 from security import (
     hash_password,
@@ -11,16 +12,12 @@ from security import (
 
 def register(
     db: Session,
-    name:str,
-    email: str,
-    password: str,
-    dob: str,
-    gender: str
-) -> None :
+    data: RegisterRequest
+) :
     existing = (
         db.query(User)
             .filter(
-                User.email == email
+                User.email == data.email
             )
             .first()
     )
@@ -32,11 +29,11 @@ def register(
         )
 
     user = User(
-        name=name,
-        email=email,
-        password=hash_password(password),
-        dob=dob,
-        gender=gender
+        name=data.name,
+        email=data.email,
+        password=hash_password(data.password),
+        dob=data.dob,
+        gender=data.gender
     )
 
     db.add(user)

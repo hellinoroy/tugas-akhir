@@ -1,4 +1,4 @@
-from fastapi import Depends, Response, APIRouter, Depends, status
+from fastapi import Depends, Response, APIRouter, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database import get_db
@@ -11,17 +11,13 @@ router = APIRouter(
     tags=["auth"]
 )
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-def create(body: RegisterRequest, db: Session = Depends(get_db)):
+def create(data: RegisterRequest, db: Session = Depends(get_db)):
     return register(
         db,
-        body.name,
-        body.email,
-        body.password,
-        body.dob,
-        body.gender
+        data
     )
 
 @router.post("/login", status_code=status.HTTP_200_OK)
