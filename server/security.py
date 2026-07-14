@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from jwt.exceptions import InvalidTokenError
+from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 from pwdlib import PasswordHash
-
+from fastapi import  HTTPException, status
 from dotenv import load_dotenv
 import os
 
@@ -33,6 +33,7 @@ def create_token(data: dict, expire = EXPIRE) -> str:
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 def check_token(token: str) -> str | None:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -40,9 +41,22 @@ def check_token(token: str) -> str | None:
         if id is None:
             return None
 
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="token_expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     except InvalidTokenError:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid_token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     return id
+
+
     
 

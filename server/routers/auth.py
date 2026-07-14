@@ -1,10 +1,12 @@
-from fastapi import Depends, Response, APIRouter, status
+from typing import Annotated
+
+from fastapi import Cookie, Depends, Response, APIRouter, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database import get_db
 from schemas.auth import RegisterRequest
 
-from services.auth_service import (register, login, get_current_user)
+from services.auth_service import (register, login, get_current_user, remake_token)
 
 router = APIRouter(
     prefix="/api/auth",
@@ -32,3 +34,7 @@ def signin(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
 @router.get("/me", status_code=status.HTTP_200_OK)
 def validate(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     return get_current_user(token, db)
+
+@router.post("/refresh", status_code=status.HTTP_200_OK)
+def refresh(refresh_token: Annotated[str | None, Cookie()] = None):
+    return remake_token(refresh_token);

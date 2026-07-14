@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from database import get_db
 from models.user import User
 from schemas.auth import RegisterRequest
 from fastapi import  HTTPException, Response, status
@@ -110,5 +109,13 @@ def get_current_user(
         "gender": user.gender
     }
 
+def remake_token(refresh_token):
+    id = check_token(refresh_token)
+    access_token = create_token({
+        "sub": str(id)
+    })
 
-
+    return {
+        "message": "Refresh token success",
+        "access_token": access_token
+    }

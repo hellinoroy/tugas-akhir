@@ -6,9 +6,68 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import axios from "axios";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL ,
+  withCredentials: true,
+});
+
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+ 
+    // Access token expired
+    if (
+        error.response?.status === 401 &&
+        error.response?.data?.detail === "token_expired" &&
+        !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        const refresh = await api.post("/auth/refresh");
+
+        const newAccessToken = refresh.data.access_token;
+
+        // Save the new access token
+        localStorage.setItem("access_token", newAccessToken);
+
+        // Update Authorization header
+        api.defaults.headers.common.Authorization =
+          `Bearer ${newAccessToken}`;
+
+        originalRequest.headers.Authorization =
+          `Bearer ${newAccessToken}`;
+
+        // Retry the original request
+        return api(originalRequest);
+      } catch {
+        localStorage.removeItem("access_token");
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access_token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

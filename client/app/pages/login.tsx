@@ -1,7 +1,7 @@
 import { MoonIcon, EnvelopeIcon, LockClosedIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { Link } from 'react-router';
-import axios from "axios";
+import { api } from "~/root";
 import { useNavigate } from "react-router";
 
 export default function Login() {
@@ -16,21 +16,10 @@ export default function Login() {
         params.append('password', password);
         params.append('password', password);
         try {
-            const response = await axios.post(
-                import.meta.env.VITE_API_BASE_URL + "/auth/login",
-                params,
-                {
-                    withCredentials: true
-                }
-            );
+            const response = await api.post("/auth/login", params);
             localStorage.setItem('access_token', response.data.access_token);
             navigate('/dashboard');
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                console.error("Server error:", error.response?.data.message);
-            } else {
-                console.error("Unexpected error:", error);
-            }
         }
     }
 

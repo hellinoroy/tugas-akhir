@@ -1,6 +1,6 @@
 import { MoonIcon, EnvelopeIcon, LockClosedIcon, ArrowLeftIcon, UserIcon, CalendarDaysIcon, UserGroupIcon, ChevronDownIcon  } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import axios from "axios";
+import { api } from "~/root";
 import { useNavigate } from "react-router";
 import { Link } from 'react-router';
 
@@ -28,17 +28,10 @@ export default function Register() {
             gender
         }
         try {
-            const response = await axios.post(
-                import.meta.env.VITE_API_BASE_URL + "/auth/register",
-                payload
-            );
+            const response = await api.post("/auth/register", payload);
             navigate('/login');
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                console.error("Server error:", error.response?.data.message);
-            } else {
-                console.error("Unexpected error:", error);
-            }
+
         }
     }
 
