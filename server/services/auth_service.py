@@ -84,6 +84,14 @@ def login(
         "access_token": access_token
     }
 
+def logout(response: Response):
+    response.delete_cookie(
+        key="refresh_token",
+        path="/",
+    )
+    return {"message": "Logged out"}
+
+
 def get_current_user(
     token: str,
     db,

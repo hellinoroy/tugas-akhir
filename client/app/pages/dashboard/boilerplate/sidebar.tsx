@@ -1,13 +1,15 @@
 import { NavLink, useNavigate } from "react-router";
 import { PencilSquareIcon, ChartPieIcon, PowerIcon } from "@heroicons/react/24/outline";
+import { api } from "~/root";
 
 
 export default function Sidebar() {
     const navigate = useNavigate(); 
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         localStorage.removeItem('access_token');
-        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        const response = await api.post("/auth/logout");
+        
         navigate('/')
     }
 

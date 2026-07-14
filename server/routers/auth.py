@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from schemas.auth import RegisterRequest
 
-from services.auth_service import (register, login, get_current_user, remake_token)
+from services.auth_service import (register, login, logout, get_current_user, remake_token)
 
 router = APIRouter(
     prefix="/api/auth",
@@ -30,6 +30,10 @@ def signin(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
         email=form_data.username,
         password=form_data.password,
     )
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+def signout(response: Response):
+    return logout(response)
 
 @router.get("/me", status_code=status.HTTP_200_OK)
 def validate(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
