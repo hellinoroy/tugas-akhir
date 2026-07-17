@@ -21,9 +21,9 @@ export async function clientLoader() {
 
     let genderValue = 0;
 
-    if (gender === "Laki-laki") {
+    if (gender === "male") {
         genderValue = 1;
-    } else if (gender === "Perempuan") {
+    } else if (gender === "female") {
         genderValue = 0;
     }
   
