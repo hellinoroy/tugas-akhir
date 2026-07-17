@@ -1,29 +1,40 @@
 import { Outlet } from "react-router";
 import { api } from "~/root";
-import { useEffect, useState } from "react";
 import Header from "./header";
 import Sidebar from "./sidebar";
 
+export async function clientLoader() {
+    const response = await api.get("/auth/me");
+    const { name, dob, gender } = response.data;
+
+    const parsedDob = new Date(dob);
+    const now = new Date();
+
+    let age = now.getFullYear() - parsedDob.getFullYear();
+
+    const monthDiff = now.getMonth() - parsedDob.getMonth();
+    const dayDiff = now.getDate() - parsedDob.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+
+    let genderValue = 0;
+
+    if (gender === "Laki-laki") {
+        genderValue = 1;
+    } else if (gender === "Perempuan") {
+        genderValue = 0;
+    }
+  
+    return { name, age, genderValue };
+
+}
+
 export default function Boilerplate() {
-    const [user, setUser] = useState('');
-
-    const getUser = async () => {
-        try {
-            const response = await api.get("/auth/me",);
-            setUser(response.data.name);
-            return response.data.user; 
-        } catch (error) {
-            return null; 
-        }
-    };
-
-    useEffect(() => {
-        getUser();
-    }, []);
-
     return (
         <div className="flex h-screen flex-col">
-            <Header username={user} />
+            <Header />
 
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar />

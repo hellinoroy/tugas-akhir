@@ -13,8 +13,9 @@ export default [
     route("register", "./pages/register.tsx"),
     route("forgot-password", "./pages/forgot-password.tsx"),
 
-    route('dashboard', './pages/dashboard/boilerplate/root.tsx', [
+    route('dashboard', './pages/dashboard/boilerplate/root.tsx', {id: "dashboard-root"}, [
         index('./pages/dashboard/home.tsx'),
+        route('assess', './pages/dashboard/assess.tsx'),
         route('predict', './pages/dashboard/predict.tsx')
     ])
 

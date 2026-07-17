@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router";
-import { PencilSquareIcon, ChartPieIcon, PowerIcon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentListIcon, ClipboardDocumentCheckIcon, ChartPieIcon, PowerIcon } from "@heroicons/react/24/outline";
 import { api } from "~/root";
 
 
@@ -15,8 +15,8 @@ export default function Sidebar() {
 
 
     return (
-        <aside className="h-[calc(100vh-4rem)] w-60 bg-teal-100 shrink-0">
-            <nav className="flex flex-col h-full items-center pt-6 ">
+        <aside className="h-[calc(100vh-4rem)] w-64 bg-teal-100 shrink-0">
+            <nav className="flex flex-col h-full items-center pt-6">
                 <NavLink
                     to="/dashboard"
                     end
@@ -26,9 +26,20 @@ export default function Sidebar() {
                     }
                 >
                     <ChartPieIcon className="px-2 text-sm size-12" />
-                    Statistik Tidur
+                    Home
                 </NavLink>
                 
+                <NavLink
+                    to="/dashboard/assess"
+                    className={({ isActive }) => (
+                        `h-14 w-full leading-[3.5rem] border-l-4 flex flex-row items-center
+                            ${isActive ? "border-amber-600" : ""}`)
+                    }
+                >
+                    <ClipboardDocumentListIcon className="px-2 text-sm size-12" />
+                    Sleep Quality Assesment
+                </NavLink>
+
                 <NavLink
                     to="/dashboard/predict"
                     className={({ isActive }) => (
@@ -36,9 +47,21 @@ export default function Sidebar() {
                             ${isActive ? "border-amber-600" : ""}`)
                     }
                 >
-                    <PencilSquareIcon className="px-2 text-sm size-12" />
-                    Prediksi Kualitas Tidur
+                    <ClipboardDocumentCheckIcon className="px-2 text-sm size-12" />
+                    Sleep Quality Prediction
                 </NavLink>
+
+
+                {/* <NavLink
+                    to="/dashboard/assess"
+                    className={({ isActive }) => (
+                        `h-14 w-full leading-[3.5rem] border-l-4 flex flex-row items-center
+                            ${isActive ? "border-amber-600" : ""}`)
+                    }
+                >
+                    <ClipboardDocumentCheckIcon className="px-2 text-sm size-12" />
+                    History
+                </NavLink> */}
                 
                 <a
                     onClick={handleLogout}
