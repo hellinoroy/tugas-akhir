@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "~/context/user-context";
 import { api } from "~/root";
-import { useRouteLoaderData } from "react-router";
 
 type Prediction = {
     prediction: number,
@@ -10,8 +10,8 @@ type Prediction = {
 type FeedbackStatus = "none" | "correct" | "wrong" | "submitted";
 
 export default function DashboardPrediction() {
-    const {age, genderValue} = useRouteLoaderData("dashboard-root");
-    
+    const { age, genderValue } = useContext(UserContext)!;
+
     const [prediction, setPrediction] = useState<Prediction>();
     const [status, setStatus] = useState<FeedbackStatus>("none");
 

@@ -1,12 +1,13 @@
 // TODO: add guard
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "~/context/user-context";
 
 export default function DashboardAssessment() {
-
+    const { age, genderValue } = useContext(UserContext)!;
     const [bedtime, setBedtime] = useState("");
     const [wakeup, setWakeup] = useState("");
-    const [awakenings, setAwkenings] = useState("");
-    const [timeInBed, setTimeInBed]= useState("");
+    const [awakenings, setAwakenings] = useState(0);
+    const [timeInBed, setTimeInBed]= useState(0);
 
     let sleepDuration: number = 0;
     let sleepDurationHour: number = 0;
@@ -34,21 +35,18 @@ export default function DashboardAssessment() {
     const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
 
-        const sleepEfficiency = sleepDuration / parseFloat(timeInBed);
-  
-
+        const sleepEfficiency = sleepDuration / timeInBed;
         const isGoodSleep =
-            sleepDuration >= 7 &&
-            sleepDuration <= 8 &&
-            parseInt(awakenings) <= 2 &&
-            sleepEfficiency >= 87.5;
-        console.log(sleepDuration);
-        console.log(awakenings);
-        console.log(sleepEfficiency);
-        console.log(isGoodSleep);
+            (age >= 18 &&
+                age < 65 &&
+                [7, 8, 9].includes(Math.round(sleepDuration)) &&
+                awakenings <= 1 &&
+                sleepEfficiency >= 0.875) ||
 
-
-
+            (age >= 65 &&
+                [7, 8].includes(Math.round(sleepDuration)) &&
+                awakenings <= 2 &&
+                sleepEfficiency >= 87.5);
     };
 
 
@@ -123,7 +121,7 @@ export default function DashboardAssessment() {
 
                     <input
                         type="number"
-                        onChange={(e) => setAwkenings(e.target.value)}
+                        onChange={(e) => setAwakenings(parseInt(e.target.value))}
                         value={awakenings}
                         className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                     />
@@ -137,7 +135,7 @@ export default function DashboardAssessment() {
                     <input
                         type="number"
                         step="0.1"
-                        onChange={(e) => setTimeInBed(e.target.value)}
+                        onChange={(e) => setTimeInBed(parseInt(e.target.value))}
                         value={timeInBed}
                         className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                     />

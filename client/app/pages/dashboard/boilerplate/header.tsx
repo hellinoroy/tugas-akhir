@@ -1,10 +1,10 @@
 import { UserIcon } from "@heroicons/react/24/outline";
-import type { clientLoader } from "./root";
-import { useLoaderData } from "react-router";
+import { useContext } from "react";
+import { UserContext } from "~/context/user-context";
 
 
 export default function Header() {
-    const { name } = useLoaderData<typeof clientLoader>();
+    const { name } = useContext(UserContext)!;
   
     return (
         <header className="flex flex-row pl-5  bg-gray-900 h-[4rem]">
