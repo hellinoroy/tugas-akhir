@@ -13,4 +13,4 @@ class FeedbackRequest(BaseModel):
     alcohol_consumption: int
     smoking_status: int
     exercise_frequency: int
-    prediction: str
+    prediction: int

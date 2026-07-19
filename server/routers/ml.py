@@ -8,7 +8,6 @@ import pandas as pd
 import joblib
 
 from services.ml_service import save_feedback
-from services.auth_service import (register, login, get_current_user)
 from routers.auth import oauth2_scheme
 
 router = APIRouter(
@@ -30,7 +29,6 @@ def predict(data: PredictionRequest):
         "probability": probability
     }
 
-
 @router.post('/feedback', status_code=status.HTTP_201_CREATED)
-def feedback(data: FeedbackRequest, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme),):
+def feedback(data: FeedbackRequest, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return save_feedback(data, db, token);

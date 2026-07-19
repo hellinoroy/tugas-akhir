@@ -98,13 +98,11 @@ def get_current_user(
 ) -> dict:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="invalid_user",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
     id = check_token(token)
-    if not id:
-        raise credentials_exception
     
     user = db.query(User).filter(User.id == int(id)).first()
 
