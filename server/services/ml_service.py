@@ -1,14 +1,11 @@
 from sqlalchemy.orm import Session
-from database import get_db
 from models.feedback import Feedback 
-from fastapi import  HTTPException, Response, status
 
 from security import (
     check_token
 )
 
 from schemas.ml import FeedbackRequest
-
 
 def save_feedback(
     data: FeedbackRequest,

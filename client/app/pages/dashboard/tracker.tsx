@@ -1,7 +1,8 @@
 // TODO: add guard
 // TODO: add fetch for current day, and tell assess again tomorrow
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "~/context/user-context";
+import { api } from "~/root";
 
 export default function DashboardAssessment() {
     const { age } = useContext(UserContext)!;
@@ -48,16 +49,31 @@ export default function DashboardAssessment() {
             awakenings <= 2 &&
             sleepEfficiency >= 0.875);
 
+    useEffect(() => {
+        const fetchToday = async () => {
+            const response = await api.get("/sleep/check-today-tracker");
+            const data = response.data
+            if(data) {
+                setBedtime(data.bedtime);
+                setWakeup(data.wakeup);
+                setAwakenings(data.awakenings);
+                setTimeInBed(data.timeInBed);
+                setAssessed(true);
+            }
+        }
+        fetchToday();
+    }, [])
 
-    const handleSubmit = (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
 
         if (bedtime && wakeup && (timeInBed >= sleepDuration)) {
             const payload = {
                 wakeup, bedtime, awakenings, timeInBed, isGoodSleep
             };
-            console.log(payload);
-
+            
+            const response = await api.post("/sleep/tracker", payload);
+            console.log(response);
 
             setAssessed(true);
         } else {
