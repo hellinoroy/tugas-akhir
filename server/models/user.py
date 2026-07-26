@@ -13,3 +13,4 @@ class User(Base):
     gender = Column(String(10), nullable=False)
 
     feedback = relationship("Feedback", back_populates="user")
+    tracker = relationship("Tracker", back_populates="user")
