@@ -15,7 +15,7 @@ export default [
 
     route('dashboard', './pages/dashboard/boilerplate/root.tsx', {id: "dashboard-root"}, [
         index('./pages/dashboard/home.tsx'),
-        route('assess', './pages/dashboard/assess.tsx'),
+        route('tracker', './pages/dashboard/tracker.tsx'),
         route('predict', './pages/dashboard/predict.tsx')
     ])
 

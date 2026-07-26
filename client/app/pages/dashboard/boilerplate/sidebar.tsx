@@ -30,14 +30,14 @@ export default function Sidebar() {
                 </NavLink>
                 
                 <NavLink
-                    to="/dashboard/assess"
+                    to="/dashboard/tracker"
                     className={({ isActive }) => (
                         `h-14 w-full leading-[3.5rem] border-l-4 flex flex-row items-center
                             ${isActive ? "border-amber-600" : ""}`)
                     }
                 >
                     <ClipboardDocumentListIcon className="px-2 text-sm size-12" />
-                    Sleep Quality Assesment
+                        Sleep Tracker
                 </NavLink>
 
                 <NavLink
