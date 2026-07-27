@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, String
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, String, Float
 from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -12,7 +12,7 @@ class Tracker(Base):
     wakeup = Column(String, nullable=False)
     bedtime = Column(String, nullable=False)
     awakenings = Column(Integer, nullable=False)
-    timeInBed = Column(Integer, nullable=False)
+    timeInBed = Column(Float, nullable=False)
     isGoodSleep = Column(Boolean, nullable=False)
 
     created_at = Column(
