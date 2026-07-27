@@ -2,7 +2,7 @@ from fastapi import Cookie, Depends, Response, APIRouter, status
 from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from database import get_db
-from services.sleep_service import track_sleep, get_today_tracker
+from services.sleep_service import track_sleep, get_today_tracker, track_sleep_test
 from routers.auth import oauth2_scheme
 
 
@@ -18,3 +18,12 @@ def check(db:Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
 @router.post('/tracker', status_code=status.HTTP_201_CREATED)
 def track(data: TrackerRequest, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return track_sleep(data, db, token)
+
+@router.post("/tracker/test/{days_offset}", status_code=status.HTTP_201_CREATED)
+def track_test(
+    days_offset: int,
+    data: TrackerRequest,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    return track_sleep_test(data, db, token, days_offset)

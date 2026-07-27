@@ -50,3 +50,29 @@ def get_today_tracker(
         )
         .first()
     )
+
+
+def track_sleep_test(
+    data: TrackerRequest,
+    db: Session,
+    token: str,
+    days_offset: int,
+):
+    user_id = check_token(token)
+
+    tracker = Tracker(
+        user_id=int(user_id),
+        wakeup=data.wakeup,
+        bedtime=data.bedtime,
+        awakenings=data.awakenings,
+        timeInBed=data.timeInBed,
+        isGoodSleep=data.isGoodSleep,
+        created_at=datetime.now() + timedelta(days=days_offset),
+    )
+
+    db.add(tracker)
+    db.commit()
+
+    return {
+        "message": f"Sleep tracked {days_offset} day(s) from now"
+    }
