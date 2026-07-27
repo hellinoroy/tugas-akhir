@@ -1,7 +1,9 @@
-// TODO: add guard
-// TODO: add fetch for current day, and tell assess again tomorrow
+// add guard
+// add fetch for current day, and tell assess again tomorrow
+// editable history 
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "~/context/user-context";
+import TrackerCard from "~/components/dashboard/home/tracker-card";
 import { api } from "~/root";
 
 export default function DashboardAssessment() {
@@ -11,10 +13,9 @@ export default function DashboardAssessment() {
     const [awakenings, setAwakenings] = useState(0);
     const [timeInBed, setTimeInBed]= useState(0);
     const [assessed, setAssessed] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     let sleepDuration: number = 0;
-    let sleepDurationHour: number = 0;
-    let sleepDurationMinute: number = 0;
     if(bedtime && wakeup) {
         const [startHour, startMinute] = bedtime.split(":").map(Number);
         const [endHour, endMinute] = wakeup.split(":").map(Number);
@@ -29,8 +30,6 @@ export default function DashboardAssessment() {
         }
 
         sleepDuration = (diff / 60);
-        sleepDurationHour = Math.floor(sleepDuration);
-        sleepDurationMinute = Math.round((sleepDuration - sleepDurationHour) * 60);
     }
 
     const sleepEfficiency = sleepDuration / timeInBed;
@@ -50,19 +49,38 @@ export default function DashboardAssessment() {
             sleepEfficiency >= 0.875);
 
     useEffect(() => {
+        setLoading(true);
         const fetchToday = async () => {
-            const response = await api.get("/sleep/check-today-tracker");
-            const data = response.data
-            if(data) {
-                setBedtime(data.bedtime);
-                setWakeup(data.wakeup);
-                setAwakenings(data.awakenings);
-                setTimeInBed(data.timeInBed);
-                setAssessed(true);
+            try {
+                const response = await api.get("/sleep/check-today-tracker");
+                const data = response.data
+                if(data) {
+                    setBedtime(data.bedtime);
+                    setWakeup(data.wakeup);
+                    setAwakenings(data.awakenings);
+                    setTimeInBed(data.timeInBed);
+                    setAssessed(true);
+                }
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setLoading(false);
             }
+
         }
+        
         fetchToday();
+
     }, [])
+
+    if(loading){
+        return(
+            <div className="flex items-center justify-center py-10">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-indigo-600"></div>
+            </div>
+        )
+    }
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
@@ -85,7 +103,6 @@ export default function DashboardAssessment() {
             console.log("fill out bud");
         }
     };
-
 
     return (
         <div className="flex flex-row h-full justify-center items-center gap-10">
@@ -181,126 +198,8 @@ export default function DashboardAssessment() {
             </form>
 
             <div className="flex flex-col">
- 
-                <div className="w-[430px] my-5 rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm flex flex-col ">
-
-                    {assessed && (
-                        <>
-                            <div
-                                className={`rounded-xl border p-5 ${
-                                    isGoodSleep
-                                        ? "border-green-200 bg-green-50"
-                                        : "border-red-200 bg-red-50"
-                                }`}
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div
-                                        className={`flex h-14 w-14 items-center justify-center rounded-full text-3xl ${
-                                            isGoodSleep
-                                                ? "bg-green-100"
-                                                : "bg-red-100"
-                                        }`}
-                                    >
-                                        {isGoodSleep ? "😊" : "😴"}
-                                    </div>
-
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-800">
-                                            Assessment Result
-                                        </h3>
-
-                                        <p
-                                            className={`mt-1 font-bold ${
-                                                isGoodSleep
-                                                    ? "text-green-700"
-                                                    : "text-red-700"
-                                            }`}
-                                        >
-                                            {isGoodSleep ? "Good Sleep Quality" : "Poor Sleep Quality"}
-                                        </p>
-
-                                        <p className="mt-1 text-sm text-gray-600">
-                                            {isGoodSleep
-                                                ? "Your sleep meets the recommended criteria."
-                                                : "Your sleep quality needs improvement."}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                           <p className="mt-6 font-medium text-gray-800">
-                                Your Sleep Result
-                            </p>
-
-                            <div className="mt-3 text-sm text-gray-600">
-                                <div>
-                                    <p className="font-medium text-gray-700">
-                                        Recorded Values
-                                    </p>
-
-                                    <ul className="mt-1 list-disc space-y-1 pl-5">
-                                        <li>
-                                            Sleep duration: <strong>{sleepDurationHour} hours {sleepDurationMinute} minutes</strong> 
-                                        </li>
-                                        <li>
-                                            Awakenings: <strong>{awakenings}</strong>
-                                        </li>
-                                        <li>
-                                            Sleep efficiency: <strong>{(sleepEfficiency * 100).toFixed(2)}%</strong>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </>
-                    )}
-
-                    {assessed && <hr className="my-6 border-gray-200" />}
-
-
-                    <p className="font-medium text-gray-800">
-                        Good Sleep Quality Criteria
-                    </p>
-
-                    <div className="mt-3 space-y-4 text-sm text-gray-600">
-
-                        <div>
-                            <p className="font-medium text-gray-700">
-                                Adults (18–64 years)
-                            </p>
-
-                            <ul className="mt-1 list-disc space-y-1 pl-5">
-                                <li>Sleep duration: <strong>7–9 hours</strong></li>
-                                <li>Awakenings: <strong>1 or fewer</strong></li>
-                                <li>Sleep efficiency: <strong>87.5% or higher</strong></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <p className="font-medium text-gray-700">
-                                Older Adults (65+ years)
-                            </p>
-
-                            <ul className="mt-1 list-disc space-y-1 pl-5">
-                                <li>Sleep duration: <strong>7–8 hours</strong></li>
-                                <li>Awakenings: <strong>2 or fewer</strong></li>
-                                <li>Sleep efficiency: <strong>87.5% or higher</strong></li>
-                            </ul>
-                        </div>
-
-                    </div>
-
-                    <div className="mt-4 border-t border-gray-200 pt-3">
-                        <p className="text-xs text-gray-500">
-                            Sleep Efficiency = (Time Asleep ÷ Time in Bed) × 100
-                        </p>
-                    </div>
-                    
-                </div>
-
+                <TrackerCard data={{bedtime, wakeup, awakenings, timeInBed, isGoodSleep }} />
             </div>
-
-
- 
 
         </div>
     );
