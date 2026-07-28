@@ -1,6 +1,3 @@
-import { UserContext } from "~/context/user-context";
-import { useContext } from "react";
-
 export type TrackerCardProp = {
     data?: {
         bedtime: string,
@@ -13,22 +10,21 @@ export type TrackerCardProp = {
 // refresh button callback kalo rajin
 
 export default function TrackerCard({ data }: TrackerCardProp) {
-
     if(!data) {
         return (
             <div className="flex h-[660px] w-[430px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
                 <h3 className="text-lg font-semibold text-gray-800">
-                    No Prediction Yet
+                    No Today's Assesment Yet
                 </h3>
 
                 <p className="mt-2 text-sm text-gray-600">
-                    Complete the form on the left, then click <strong>Submit</strong> to
-                    generate your sleep quality prediction.
+                    Complete the form Sleep Tracker Page, then click <strong>Submit</strong> to
+                    generate your sleep quality assessment.
                 </p>
             </div>
         );
-
     }
+
     let sleepDuration: number = 0;
     let sleepDurationHour: number = 0;
     let sleepDurationMinute: number = 0;
@@ -51,8 +47,6 @@ export default function TrackerCard({ data }: TrackerCardProp) {
     }
 
     const sleepEfficiency = sleepDuration / data.timeInBed;
-
-
 
     return (
         <div className="w-[430px] my-5 rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm flex flex-col ">

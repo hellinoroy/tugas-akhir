@@ -51,6 +51,28 @@ def get_today_tracker(
         .first()
     )
 
+def get_previous_7_days_tracker(
+    db: Session,
+    token: str
+):
+    today = datetime.now().date()
+
+    start = datetime.combine(today - timedelta(days=7), datetime.min.time())
+    end = datetime.combine(today, datetime.min.time())
+
+    user_id = check_token(token)
+
+    return (
+        db.query(Tracker)
+        .filter(
+            Tracker.user_id == user_id,
+            Tracker.created_at >= start,
+            Tracker.created_at < end,
+        )
+        .order_by(Tracker.created_at.desc())
+        .all()
+    )
+
 
 def track_sleep_test(
     data: TrackerRequest,

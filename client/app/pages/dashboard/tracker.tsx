@@ -5,8 +5,12 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "~/context/user-context";
 import TrackerCard from "~/components/dashboard/home/tracker-card";
 import { api } from "~/root";
+import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
+import type { LastSevenDaysProps } from "~/components/dashboard/home/weekly-tracker";
 
 export default function DashboardAssessment() {
+    const [history, setHistory] = useState<LastSevenDaysProps>();
+    
     const { age } = useContext(UserContext)!;
     const [bedtime, setBedtime] = useState("");
     const [wakeup, setWakeup] = useState("");
@@ -69,8 +73,21 @@ export default function DashboardAssessment() {
             }
 
         }
+
+        const fetchWeekly = async () => {
+            try {
+                const response = await api.get("/sleep/weekly");
+                if(response) {
+                    setHistory(response);
+                }
+
+            } catch (error) {
+                
+            }
+        }
         
         fetchToday();
+        fetchWeekly();
 
     }, [])
 
@@ -94,6 +111,8 @@ export default function DashboardAssessment() {
             console.log(response);
 
             setAssessed(true);
+
+            
         } else {
             console.log(bedtime);
             console.log(wakeup);
@@ -105,102 +124,111 @@ export default function DashboardAssessment() {
     };
 
     return (
-        <div className="flex flex-row h-full justify-center items-center gap-10">
-            <form 
-                className="w-full max-w-md  flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl space-y-6"
-                onSubmit={handleSubmit}
-            >
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-800 text-center">
-                        Sleep Tracker
-                    </h2>
-
-                    <p className="mt-1 text-sm text-gray-500 text-center">
-                        Track your sleep and assess your sleep quality.
-                    </p>
-                </div>
-
-                <hr className="border-gray-100" />
-
-                <div className="flex justify-evenly flex-row gap-5 ">
-
-                    <div className="flex flex-col flex-1 space-y-2">
-                        <label className="text-sm font-semibold text-gray-700">
-                            Bedtime
-                        </label>
-
-                        <input
-                            type="time"
-                            disabled={assessed}
-                            onChange={(e) => setBedtime(e.target.value)}
-                            value={bedtime}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                        />
-                    </div>
-
-                    <div className="flex flex-col flex-1 space-y-2">
-                        <label className="text-sm font-semibold text-gray-700">
-                            Wake-up Time
-                        </label>
-
-                        <input
-                            type="time"
-                            disabled={assessed}
-                            onChange={(e) => setWakeup(e.target.value)}
-                            value={wakeup}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">
-                        Number of Awakenings
-                    </label>
-
-                    <input
-                        type="number"
-                        disabled={assessed}
-                        onChange={(e) => setAwakenings(parseInt(e.target.value))}
-                        value={awakenings}
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">
-                        Total Time in Bed (hours)
-                    </label>
-
-                    <input
-                        type="number"
-                        disabled={assessed}
-                        min={0}
-                        step={0.5}
-                        onChange={(e) => setTimeInBed(parseFloat(e.target.value))}
-                        value={timeInBed}
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={assessed}
-                    className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
-                        assessed
-                            ? "cursor-not-allowed bg-gray-400"
-                            : "bg-indigo-600 hover:bg-indigo-700"
-                    }`}
+        <div className="flex flex-col items-center overflow-scroll">
+            <div className="flex flex-row h-full justify-center items-center gap-10 my-20">
+                <form 
+                    className="w-full max-w-md  flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl space-y-6"
+                    onSubmit={handleSubmit}
                 >
-                    Assess Sleep Quality
-                </button>
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800 text-center">
+                            Sleep Tracker
+                        </h2>
 
-            </form>
+                        <p className="mt-1 text-sm text-gray-500 text-center">
+                            Track your sleep and assess your sleep quality.
+                        </p>
+                    </div>
 
-            <div className="flex flex-col">
-                <TrackerCard data={{bedtime, wakeup, awakenings, timeInBed, isGoodSleep }} />
+                    <hr className="border-gray-100" />
+
+                    <div className="flex justify-evenly flex-row gap-5 ">
+
+                        <div className="flex flex-col flex-1 space-y-2">
+                            <label className="text-sm font-semibold text-gray-700">
+                                Bedtime
+                            </label>
+
+                            <input
+                                type="time"
+                                disabled={assessed}
+                                onChange={(e) => setBedtime(e.target.value)}
+                                value={bedtime}
+                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                            />
+                        </div>
+
+                        <div className="flex flex-col flex-1 space-y-2">
+                            <label className="text-sm font-semibold text-gray-700">
+                                Wake-up Time
+                            </label>
+
+                            <input
+                                type="time"
+                                disabled={assessed}
+                                onChange={(e) => setWakeup(e.target.value)}
+                                value={wakeup}
+                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">
+                            Number of Awakenings
+                        </label>
+
+                        <input
+                            type="number"
+                            disabled={assessed}
+                            onChange={(e) => setAwakenings(parseInt(e.target.value))}
+                            value={awakenings}
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">
+                            Total Time in Bed (hours)
+                        </label>
+
+                        <input
+                            type="number"
+                            disabled={assessed}
+                            min={0}
+                            step={0.5}
+                            onChange={(e) => setTimeInBed(parseFloat(e.target.value))}
+                            value={timeInBed}
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={assessed}
+                        className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
+                            assessed
+                                ? "cursor-not-allowed bg-gray-400"
+                                : "bg-indigo-600 hover:bg-indigo-700"
+                        }`}
+                    >
+                        Assess Sleep Quality
+                    </button>
+
+                </form>
+
+                {assessed ? (
+                <TrackerCard
+                    data={{ bedtime, wakeup, awakenings, timeInBed, isGoodSleep }}
+                />
+                ) : (
+                <TrackerCard  />
+                )}
+                
+                
             </div>
-
+            <WeeklyTracker data={history?.data} />
         </div>
+
     );
 }
