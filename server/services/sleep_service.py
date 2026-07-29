@@ -1,14 +1,13 @@
 from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from models.tracker import Tracker 
-from models.user import User
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 from security import (
     check_token
 )
 
-def track_sleep(
+def post_tracker(
     data: TrackerRequest,
     db: Session,
     token: str    
@@ -19,6 +18,8 @@ def track_sleep(
         user_id=int(user_id),
         wakeup = data.wakeup,
         bedtime = data.bedtime,
+        sleepDuration = data.sleepDuration,
+        sleepEfficiency = data.sleepEfficiency,
         awakenings = data.awakenings,
         timeInBed = data.timeInBed,
         isGoodSleep = data.isGoodSleep 
@@ -51,30 +52,48 @@ def get_today_tracker(
         .first()
     )
 
-def get_previous_7_days_tracker(
+
+def get_tracker(
     db: Session,
-    token: str
+    token: str,
+    page: int = 1,
+    page_size: int = 10,
+    start_date=None,
+    end_date=None,
 ):
-    today = datetime.now().date()
-
-    start = datetime.combine(today - timedelta(days=7), datetime.min.time())
-    end = datetime.combine(today, datetime.min.time())
-
     user_id = check_token(token)
 
-    return (
+    query = (
         db.query(Tracker)
-        .filter(
-            Tracker.user_id == user_id,
-            Tracker.created_at >= start,
-            Tracker.created_at < end,
-        )
-        .order_by(Tracker.created_at.desc())
+        .filter(Tracker.user_id == user_id)
+    )
+
+    if start_date:
+        start_dt = datetime.combine(start_date, time.min)
+        query = query.filter(Tracker.created_at >= start_dt)
+
+    if end_date:
+        end_dt = datetime.combine(end_date, time.max)
+        query = query.filter(Tracker.created_at <= end_dt)
+
+    total = query.count()
+
+    items = (
+        query.order_by(Tracker.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
         .all()
     )
 
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+    }
 
-def track_sleep_test(
+
+def post_tracker_test(
     data: TrackerRequest,
     db: Session,
     token: str,
@@ -86,6 +105,8 @@ def track_sleep_test(
         user_id=int(user_id),
         wakeup=data.wakeup,
         bedtime=data.bedtime,
+        sleepDuration = data.sleepDuration,
+        sleepEfficiency = data.sleepEfficiency,
         awakenings=data.awakenings,
         timeInBed=data.timeInBed,
         isGoodSleep=data.isGoodSleep,

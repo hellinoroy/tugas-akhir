@@ -11,6 +11,8 @@ class Tracker(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     wakeup = Column(String, nullable=False)
     bedtime = Column(String, nullable=False)
+    sleepDuration = Column(Float, nullable=False)
+    sleepEfficiency = Column(Float, nullable=False)
     awakenings = Column(Integer, nullable=False)
     timeInBed = Column(Float, nullable=False)
     isGoodSleep = Column(Boolean, nullable=False)

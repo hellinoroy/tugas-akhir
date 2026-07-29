@@ -2,6 +2,8 @@ export type Tracker = {
     id?: number,
     bedtime: string,
     wakeup:string,
+    sleepDuration:number,
+    sleepEfficiency: number,
     awakenings: number,
     timeInBed: number,
     isGoodSleep: boolean,
@@ -36,31 +38,6 @@ export default function TrackerCard( { data } : TrackerCardProp) {
             </div>
         );
     }
-
-    let sleepDuration: number = 0;
-    let sleepDurationHour: number = 0;
-    let sleepDurationMinute: number = 0;
-    if(data.bedtime && data.wakeup) {
-        const [startHour, startMinute] = data.bedtime.split(":").map(Number);
-        const [endHour, endMinute] = data.wakeup.split(":").map(Number);
-        const start = startHour * 60 + startMinute;
-        let end = endHour * 60 + endMinute;
-
-        let diff = end - start;
-        
-        if (diff < 0) {
-            end += 24 * 60;
-            diff = end - start;
-        }
-
-        sleepDuration = (diff / 60);
-        sleepDurationHour = Math.floor(sleepDuration);
-        sleepDurationMinute = Math.round((sleepDuration - sleepDurationHour) * 60);
-    }
-
-    const sleepEfficiency = sleepDuration / data.timeInBed!;
-
-
 
     return (
         <div className="w-[430px] my-5 rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm flex flex-col ">
@@ -119,13 +96,13 @@ export default function TrackerCard( { data } : TrackerCardProp) {
 
                     <ul className="mt-1 list-disc space-y-1 pl-5">
                         <li>
-                            Sleep duration: <strong>{sleepDurationHour} hours {sleepDurationMinute} minutes</strong> 
+                          <strong>{Math.floor(data.sleepDuration)}</strong> hours <strong>{Math.round((data.sleepDuration % 1) * 60)}</strong> minutes
                         </li>
                         <li>
                             Awakenings: <strong>{data.awakenings}</strong>
                         </li>
                         <li>
-                            Sleep efficiency: <strong>{(sleepEfficiency * 100).toFixed(2)}%</strong>
+                            Sleep efficiency: <strong>{(data.sleepEfficiency * 100).toFixed(2)}%</strong>
                         </li>
                     </ul>
                 </div>

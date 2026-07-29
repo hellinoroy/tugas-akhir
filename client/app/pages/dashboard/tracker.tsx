@@ -56,6 +56,8 @@ export default function DashboardAssessment() {
     const trackerData: Tracker = {
         bedtime,
         wakeup,
+        sleepDuration,
+        sleepEfficiency,
         awakenings,
         timeInBed,
         isGoodSleep,
@@ -128,7 +130,7 @@ export default function DashboardAssessment() {
 
         if (bedtime && wakeup && (timeInBed >= sleepDuration)) {
             const payload = {
-                wakeup, bedtime, awakenings, timeInBed, isGoodSleep
+                wakeup, bedtime, sleepDuration, sleepEfficiency, awakenings, timeInBed, isGoodSleep
             };
             
             const response = await api.post("/sleep/tracker", payload);
