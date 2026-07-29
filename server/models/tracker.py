@@ -21,6 +21,12 @@ class Tracker(Base):
         nullable=False
     )
 
+    updated_at = Column(
+        DateTime(timezone=True),
+        nullable=True,
+        onupdate=func.now(),
+    )
+
     user = relationship("User", back_populates="tracker")
 
 
