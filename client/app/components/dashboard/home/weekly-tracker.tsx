@@ -1,18 +1,9 @@
-export type ManualAssessment = {
-    bedtime: string;
-    wakeup: string;
-    timeInBed: number;
-    created_at: string;
-    id: number;
-    user_id: number;
-    awakenings: number;
-    isGoodSleep: boolean;
-}
+import { Link } from "react-router";
+import type { TrackerAPI, Tracker } from "./tracker-card";
 
 export type LastSevenDaysProps = {
-    data?: ManualAssessment[];
+    data: TrackerAPI| undefined;
 }
-
 
 export default function WeeklyTracker({ data }: LastSevenDaysProps) {
     const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -22,7 +13,7 @@ export default function WeeklyTracker({ data }: LastSevenDaysProps) {
         return date.toISOString().split("T")[0];
     });
 
-    const trackerMap = new Map<string, ManualAssessment>();
+    const trackerMap = new Map<string, Tracker>();
 
     if(!data) {
         return (
@@ -38,15 +29,16 @@ export default function WeeklyTracker({ data }: LastSevenDaysProps) {
             </div>
         );
     }
+    console.log(data);
 
-    [...data!]
+    [...data.items!]
         .sort(
             (a, b) =>
-                new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime()
+                new Date(b.created_at!).getTime() -
+                new Date(a.created_at!).getTime()
         )
         .forEach((item) => {
-            const day = item.created_at.split("T")[0];
+            const day = item.created_at!.split("T")[0];
 
             if (!trackerMap.has(day)) {
                 trackerMap.set(day, item);
@@ -56,7 +48,11 @@ export default function WeeklyTracker({ data }: LastSevenDaysProps) {
     
     return (
         <div className="flex flex-col w-[1400px] h-[360px] rounded-xl border border-gray-200 bg-white p-4 shadow-sm my-20 gap-4">
-            <h2 className="text-2xl font-bold text-gray-800">Assessment History</h2>
+            <div className="flex flex-row justify-between">
+                <h2 className="text-2xl font-bold text-gray-800">Assessment History</h2>
+                <Link to="/dashboard/history" className="text-yellow-500">History</Link>
+            </div>
+            
             <div className="flex flex-row items-center gap-4 ">
                 {last7Days.map((day) => {
                     const tracker = trackerMap.get(day);

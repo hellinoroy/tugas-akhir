@@ -1,15 +1,27 @@
-export type TrackerCardProp = {
-    data?: {
-        bedtime: string,
-        wakeup:string,
-        awakenings: number,
-        timeInBed: number,
-        isGoodSleep: boolean
-    }
+export type Tracker = {
+    id?: number,
+    bedtime: string,
+    wakeup:string,
+    awakenings: number,
+    timeInBed: number,
+    isGoodSleep: boolean,
+    created_at?: string,
+    updated_at?: string,
 };
+
+export type TrackerAPI = {
+    items: Tracker[],
+    page: number,
+    page_size: number,
+    total:number,
+}
+
+type TrackerCardProp = {
+    data: Tracker | undefined 
+} 
 // refresh button callback kalo rajin
 
-export default function TrackerCard({ data }: TrackerCardProp) {
+export default function TrackerCard( { data } : TrackerCardProp) {
     if(!data) {
         return (
             <div className="flex h-[660px] w-[430px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
@@ -46,7 +58,9 @@ export default function TrackerCard({ data }: TrackerCardProp) {
         sleepDurationMinute = Math.round((sleepDuration - sleepDurationHour) * 60);
     }
 
-    const sleepEfficiency = sleepDuration / data.timeInBed;
+    const sleepEfficiency = sleepDuration / data.timeInBed!;
+
+
 
     return (
         <div className="w-[430px] my-5 rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm flex flex-col ">

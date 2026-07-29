@@ -3,13 +3,13 @@
 // editable history 
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "~/context/user-context";
-import TrackerCard from "~/components/dashboard/home/tracker-card";
 import { api } from "~/root";
+import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
-import type { LastSevenDaysProps } from "~/components/dashboard/home/weekly-tracker";
+import type { Tracker, TrackerAPI } from "~/components/dashboard/home/tracker-card";
 
 export default function DashboardAssessment() {
-    const [history, setHistory] = useState<LastSevenDaysProps>();
+    const [historyData, setHistoryData] = useState<TrackerAPI>();
     
     const { age } = useContext(UserContext)!;
     const [bedtime, setBedtime] = useState("");
@@ -52,6 +52,16 @@ export default function DashboardAssessment() {
             awakenings <= 2 &&
             sleepEfficiency >= 0.875);
 
+
+    const trackerData: Tracker = {
+        bedtime,
+        wakeup,
+        awakenings,
+        timeInBed,
+        isGoodSleep,
+    };
+
+
     useEffect(() => {
         setLoading(true);
         const fetchToday = async () => {
@@ -76,15 +86,29 @@ export default function DashboardAssessment() {
 
         const fetchWeekly = async () => {
             try {
-                const response = await api.get("/sleep/weekly");
-                if(response) {
-                    setHistory(response);
-                }
+                const today = new Date();
 
+                const endDate = new Date(today);
+                endDate.setDate(today.getDate() - 1); // yesterday
+
+                const startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7); // 7 days ago
+
+                const response = await api.get("/sleep/tracker", {
+                    params: {
+                        start_date: startDate.toISOString().split("T")[0],
+                        end_date: endDate.toISOString().split("T")[0],
+                    },
+                });
+
+                if (response) {
+                    console.log(response.data);
+                    setHistoryData(response.data);
+                }
             } catch (error) {
-                
+                console.error(error);
             }
-        }
+        };
         
         fetchToday();
         fetchWeekly();
@@ -218,16 +242,13 @@ export default function DashboardAssessment() {
                 </form>
 
                 {assessed ? (
-                <TrackerCard
-                    data={{ bedtime, wakeup, awakenings, timeInBed, isGoodSleep }}
-                />
+                    <TrackerCard data={trackerData}/>
                 ) : (
-                <TrackerCard  />
+                    <TrackerCard data={undefined} />
                 )}
                 
-                
             </div>
-            <WeeklyTracker data={history?.data} />
+            <WeeklyTracker data={ historyData } />
         </div>
 
     );

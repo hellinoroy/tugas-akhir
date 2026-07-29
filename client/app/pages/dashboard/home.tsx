@@ -1,34 +1,48 @@
+// TODO: CRUD buat history, buat halaman tabel buat nampilin semua history
 import { useEffect, useState } from "react";
 import { api } from "~/root";
 
 import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
 
-import type { TrackerCardProp } from "~/components/dashboard/home/tracker-card";
+import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
 import type { LastSevenDaysProps } from "~/components/dashboard/home/weekly-tracker";
 
 export default function DashboardHome() {
 
-    const [trackerData, setTrackerData] = useState<TrackerCardProp>();
-    const [history, setHistory] = useState<LastSevenDaysProps>();
+    const [trackerData, setTrackerData] = useState<Tracker>();
+    const [historyData, setHistoryData] = useState<TrackerAPI>();
 
     useEffect(() => {
         const fetchToday = async () => {
             const response = await api.get("/sleep/check-today-tracker");
-            setTrackerData(response);
+            setTrackerData(response.data);
         }
 
         const fetchWeekly = async () => {
             try {
-                const response = await api.get("/sleep/weekly");
-                if(response) {
-                    setHistory(response);
-                }
+                const today = new Date();
 
+                const endDate = new Date(today);
+                endDate.setDate(today.getDate() - 1); // yesterday
+
+                const startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7); // 7 days ago
+
+                const response = await api.get("/sleep/tracker", {
+                    params: {
+                        start_date: startDate.toISOString().split("T")[0],
+                        end_date: endDate.toISOString().split("T")[0],
+                    },
+                });
+
+                if (response) {
+                    setHistoryData(response.data);
+                }
             } catch (error) {
-                
+                console.error(error);
             }
-        }
+        };
 
 
         fetchToday();
@@ -41,8 +55,8 @@ export default function DashboardHome() {
     return (
         <div>
             <div className="">
-                <TrackerCard data={ trackerData?.data } />
-                <WeeklyTracker data={ history?.data } />
+                <TrackerCard data={ trackerData } />
+                <WeeklyTracker data={ historyData } />
             </div>
 
         </div>
