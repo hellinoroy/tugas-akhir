@@ -1,14 +1,14 @@
 export type Tracker = {
-    id?: number,
-    bedtime: string,
-    wakeup:string,
-    sleepDuration:number,
-    sleepEfficiency: number,
-    awakenings: number,
-    timeInBed: number,
-    isGoodSleep: boolean,
-    created_at?: string,
-    updated_at?: string,
+    id?: number | null,
+    bedtime: string | null,
+    wakeup:string | null,
+    sleepDuration:number | null,
+    sleepEfficiency: number | null,
+    awakenings: number | null,
+    timeInBed: number | null,
+    isGoodSleep: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null,
 };
 
 export type TrackerAPI = {
@@ -96,13 +96,13 @@ export default function TrackerCard( { data } : TrackerCardProp) {
 
                     <ul className="mt-1 list-disc space-y-1 pl-5">
                         <li>
-                          <strong>{Math.floor(data.sleepDuration)}</strong> hours <strong>{Math.round((data.sleepDuration % 1) * 60)}</strong> minutes
+                          <strong>{Math.floor(data.sleepDuration!)}</strong> hours <strong>{Math.round((data.sleepDuration! % 1) * 60)}</strong> minutes
                         </li>
                         <li>
                             Awakenings: <strong>{data.awakenings}</strong>
                         </li>
                         <li>
-                            Sleep efficiency: <strong>{(data.sleepEfficiency * 100).toFixed(2)}%</strong>
+                            Sleep efficiency: <strong>{(data.sleepEfficiency! * 100).toFixed(2)}%</strong>
                         </li>
                     </ul>
                 </div>

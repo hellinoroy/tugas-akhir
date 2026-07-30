@@ -250,7 +250,7 @@ export default function DashboardAssessment() {
                 )}
                 
             </div>
-            <WeeklyTracker data={ historyData } />
+            <WeeklyTracker />
         </div>
 
     );
