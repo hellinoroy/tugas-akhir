@@ -1,8 +1,8 @@
-from fastapi import Cookie, Depends, Response, APIRouter, status
+from fastapi import Cookie, Depends, HTTPException, Response, APIRouter, status
 from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from database import get_db
-from services.sleep_service import post_tracker, get_today_tracker, post_tracker_test, get_tracker
+from services.sleep_service import delete_tracker, post_tracker, get_today_tracker, post_tracker_test, get_tracker, put_tracker_service
 from routers.auth import oauth2_scheme
 from datetime import date
 from fastapi import Query
@@ -46,3 +46,40 @@ def track_test(
     token: str = Depends(oauth2_scheme),
 ):
     return post_tracker_test(data, db, token, days_offset)
+
+
+@router.put("/tracker/{id}", status_code=status.HTTP_200_OK)
+def update_tracker(
+    id: int,
+    data: TrackerRequest,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    tracker = put_tracker_service(db, token, id, data)
+
+    if not tracker:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tracker not found",
+        )
+
+    return tracker
+
+@router.delete("/tracker/{id}")
+def delete_tracker_route(
+    id: int,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    tracker = delete_tracker(db, token, id)
+
+    if not tracker:
+        raise HTTPException(
+            status_code=404,
+            detail="Tracker not found"
+        )
+
+    return {
+        "message": "Tracker deleted successfully",
+        "id": id
+    }

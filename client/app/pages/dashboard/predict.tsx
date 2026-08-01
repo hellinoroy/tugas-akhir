@@ -49,7 +49,6 @@ export default function DashboardPrediction() {
 
         if (status == 'correct') {
             predicted = prediction!.prediction;
-            console.log(predicted);
         } else if (status == 'wrong') {
             predicted = prediction!.prediction == 1 ? 0 : 1;
         }

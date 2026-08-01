@@ -1,3 +1,4 @@
+from datetime import date
 from pydantic import BaseModel
 
 class TrackerRequest(BaseModel):
@@ -8,3 +9,4 @@ class TrackerRequest(BaseModel):
     awakenings: int
     timeInBed: float
     isGoodSleep: bool
+    created_at: date | None = None

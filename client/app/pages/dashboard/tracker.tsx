@@ -9,7 +9,6 @@ import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
 import type { Tracker, TrackerAPI } from "~/components/dashboard/home/tracker-card";
 
 export default function DashboardAssessment() {
-    const [historyData, setHistoryData] = useState<TrackerAPI>();
     
     const { age } = useContext(UserContext)!;
     const [bedtime, setBedtime] = useState("");
@@ -36,7 +35,10 @@ export default function DashboardAssessment() {
         sleepDuration = (diff / 60);
     }
 
-    const sleepEfficiency = sleepDuration / timeInBed;
+    const sleepEfficiency =
+    timeInBed > 0
+        ? sleepDuration / timeInBed
+        : 0;
 
     const isGoodSleep =
         (age >= 18 &&
@@ -86,34 +88,7 @@ export default function DashboardAssessment() {
 
         }
 
-        const fetchWeekly = async () => {
-            try {
-                const today = new Date();
-
-                const endDate = new Date(today);
-                endDate.setDate(today.getDate() - 1); // yesterday
-
-                const startDate = new Date(today);
-                startDate.setDate(today.getDate() - 7); // 7 days ago
-
-                const response = await api.get("/sleep/tracker", {
-                    params: {
-                        start_date: startDate.toISOString().split("T")[0],
-                        end_date: endDate.toISOString().split("T")[0],
-                    },
-                });
-
-                if (response) {
-                    console.log(response.data);
-                    setHistoryData(response.data);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        
         fetchToday();
-        fetchWeekly();
 
     }, [])
 
@@ -125,7 +100,7 @@ export default function DashboardAssessment() {
         )
     }
 
-    const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
 
         if (bedtime && wakeup && (timeInBed >= sleepDuration)) {
@@ -147,7 +122,7 @@ export default function DashboardAssessment() {
             console.log(timeInBed >= sleepDuration);
             console.log("fill out bud");
         }
-    };
+    };  
 
     return (
         <div className="flex flex-col items-center overflow-scroll">

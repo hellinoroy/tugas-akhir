@@ -3,7 +3,7 @@ from schemas.sleep import TrackerRequest
 from models.tracker import Tracker 
 from datetime import datetime, timedelta, date
 from sqlalchemy import text
-
+# tidak ada role admin
 
 from security import (
     check_token
@@ -24,7 +24,8 @@ def post_tracker(
         sleepEfficiency = data.sleepEfficiency,
         awakenings = data.awakenings,
         timeInBed = data.timeInBed,
-        isGoodSleep = data.isGoodSleep 
+        isGoodSleep = data.isGoodSleep,
+        created_at = data.created_at
     )
 
     db.add(tracker)
@@ -32,7 +33,6 @@ def post_tracker(
     return {
         "message": "Daily sleep tracked"
     }
-
 
 def get_today_tracker(
     db: Session,
@@ -68,7 +68,6 @@ def get_tracker(
         end_date = date.today()
 
     if start_date is None:
-        # default to last 30 days
         start_date = end_date - timedelta(days=29)
 
     offset = (page - 1) * page_size
@@ -146,3 +145,70 @@ def post_tracker_test(
     return {
         "message": f"Sleep tracked {days_offset} day(s) from now"
     }
+
+def put_tracker_service(
+    db: Session,
+    token: str,
+    id: int,
+    data: TrackerRequest,
+):
+    user_id = check_token(token)
+
+    tracker = (
+        db.query(Tracker)
+        .filter(
+            Tracker.id == id,
+            Tracker.user_id == user_id,
+        )
+        .first()
+    )
+
+    if not tracker:
+        return None
+
+    print(id)
+    print(data)
+    tracker.wakeup = data.wakeup
+    tracker.bedtime = data.bedtime
+    tracker.sleepDuration = data.sleepDuration
+    tracker.sleepEfficiency = data.sleepEfficiency
+    tracker.awakenings = data.awakenings
+    tracker.timeInBed = data.timeInBed
+    tracker.isGoodSleep = data.isGoodSleep
+
+    db.commit()
+    db.refresh(tracker)
+
+    return tracker
+
+
+
+def delete_tracker(
+    db: Session,
+    token: str,
+    id: int
+):
+    user_id = check_token(token)
+
+    tracker = (
+        db.query(Tracker)
+        .filter(
+            Tracker.user_id == user_id,
+            Tracker.id == id
+        )
+        .first()
+    )
+
+    if not tracker:
+        return None
+
+    db.delete(tracker)
+    db.commit()
+
+    return tracker
+    
+
+
+
+
+
