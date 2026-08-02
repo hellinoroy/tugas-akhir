@@ -2,7 +2,15 @@ from fastapi import Cookie, Depends, HTTPException, Response, APIRouter, status
 from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from database import get_db
-from services.sleep_service import delete_tracker, post_tracker, get_today_tracker, post_tracker_test, get_tracker, put_tracker_service
+from services.sleep_service import (   
+    get_today_tracker,
+    get_tracker, 
+    get_weekly_summary_service, 
+    post_tracker_test, 
+    post_tracker,
+    put_tracker_service,
+    delete_tracker,
+)
 from routers.auth import oauth2_scheme
 from datetime import date
 from fastapi import Query
@@ -33,6 +41,15 @@ def get_user_tracker(
 @router.get('/check-today-tracker', status_code=status.HTTP_200_OK)
 def check(db:Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     return get_today_tracker(db, token)
+
+@router.get("/tracker/weekly-summary")
+def get_weekly_summary(
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    return get_weekly_summary_service(db, token)
+
+
 
 @router.post('/tracker', status_code=status.HTTP_201_CREATED)
 def daily_tracker(data: TrackerRequest, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):

@@ -6,7 +6,7 @@ import { UserContext } from "~/context/user-context";
 import { api } from "~/root";
 import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
-import type { Tracker, TrackerAPI } from "~/components/dashboard/home/tracker-card";
+import type { Tracker } from "~/components/dashboard/home/tracker-card";
 
 export default function DashboardAssessment() {
     

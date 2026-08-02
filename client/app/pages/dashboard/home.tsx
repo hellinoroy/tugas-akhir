@@ -6,6 +6,7 @@ import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
 
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
+import WeeklySummary from "~/components/dashboard/home/weekly-summary";
 // import type { LastSevenDaysProps } from "~/components/dashboard/home/weekly-tracker";
 
 export default function DashboardHome() {
@@ -57,6 +58,7 @@ export default function DashboardHome() {
             <div className="">
                 <TrackerCard data={ trackerData } />
                 <WeeklyTracker />
+                <WeeklySummary />
             </div>
 
         </div>

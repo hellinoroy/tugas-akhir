@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from models.tracker import Tracker 
 from datetime import datetime, timedelta, date
-from sqlalchemy import text
+from sqlalchemy import text, func
 # tidak ada role admin
 
 from security import (
@@ -119,6 +119,88 @@ def get_tracker(
         "page_size": page_size,
     }
 
+
+def get_weekly_summary_service(
+    db: Session,
+    token: str,
+):
+    user_id = check_token(token)
+
+    today = datetime.now().date()
+    start_date = today - timedelta(days=7)
+
+    latest_per_day = (
+        db.query(
+            func.date(Tracker.created_at).label("date"),
+            func.max(Tracker.created_at).label("latest_created_at"),
+        )
+        .filter(
+            Tracker.user_id == user_id,
+            Tracker.created_at >= start_date,
+            Tracker.created_at < today,
+        )
+        .group_by(func.date(Tracker.created_at))
+        .subquery()
+    )
+
+    trackers = (
+        db.query(Tracker)
+        .join(
+            latest_per_day,
+            (func.date(Tracker.created_at) == latest_per_day.c.date)
+            & (Tracker.created_at == latest_per_day.c.latest_created_at),
+        )
+        .filter(Tracker.user_id == user_id)
+        .order_by(Tracker.created_at.asc())
+        .all()
+    )
+
+    if not trackers:
+        return {
+            "summary": {
+                "average_sleep": 0,
+                "good_days": 0,
+                "poor_days": 0,
+                "average_awakenings": 0,
+            },
+            "daily": [],
+        }
+
+    total_sleep = sum(t.sleepDuration for t in trackers)
+    total_awakenings = sum(t.awakenings for t in trackers)
+
+    good_days = sum(
+        1 for t in trackers
+        if t.isGoodSleep
+    )
+
+    poor_days = len(trackers) - good_days
+
+    return {
+        "summary": {
+            "average_sleep": round(
+                total_sleep / len(trackers),
+                2
+            ),
+            "good_days": good_days,
+            "poor_days": poor_days,
+            "average_awakenings": round(
+                total_awakenings / len(trackers),
+                2
+            ),
+        },
+        "daily": [
+            {
+                "date": tracker.created_at.date(),
+                "sleep_duration": tracker.sleepDuration,
+                "awakenings": tracker.awakenings,
+                "is_good_sleep": tracker.isGoodSleep,
+            }
+            for tracker in trackers
+        ],
+    }
+
+
 def post_tracker_test(
     data: TrackerRequest,
     db: Session,
@@ -180,8 +262,6 @@ def put_tracker_service(
     db.refresh(tracker)
 
     return tracker
-
-
 
 def delete_tracker(
     db: Session,
