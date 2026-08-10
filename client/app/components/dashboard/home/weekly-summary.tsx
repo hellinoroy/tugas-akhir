@@ -1,6 +1,6 @@
 
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import {
     BarChart,
     Bar,
@@ -10,8 +10,7 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
-import { api } from "~/root";
-
+import type { Tracker, TrackerAPIProp } from "./tracker-card";
 
 type WeeklyDaily = {
     date: string;
@@ -32,76 +31,92 @@ type WeeklyReport =  {
     daily: WeeklyDaily[];
 }
 
+export default function WeeklySummary( { data } : TrackerAPIProp ) {
 
-
-export default function WeeklySummary() {
-    const [data, setData] = useState<WeeklyReport>();
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchWeeklySummary = async () => {
-            try {
-                const response = await api.get("/sleep/tracker/weekly-summary");
-                setData(response.data);
-            } catch (error) {
-                console.error("Failed to fetch weekly summary:", error);
-            } finally {
-                setLoading(false);
+    const filtered = useMemo(() => {
+        const map = new Map<string, Tracker>();
+        let awakenings = 0;
+        let sleepDuration = 0;
+        let goodSleepDays = 0;
+        let totalDays = 0;
+        for (const item of data?.items ?? []) {
+            if (!item.created_at) {
+                continue;
             }
-        };
 
-        fetchWeeklySummary();
-    }, []);
+            const key = item.created_at.slice(0, 10);
+            const existing = map.get(key);
 
-    if (loading) {
-        return (
-            <div className="rounded-xl border border-gray-200 bg-white p-6">
-                Loading weekly report...
-            </div>
-        );
-    }
+            if (!existing) {
+                map.set(key, item);
+                continue;
+            }
 
-    if (!data) {
-        return (
-            <div className="rounded-xl border border-gray-200 bg-white p-6">
-                Failed to load weekly report.
-            </div>
-        );
-    }
+            if (
+                new Date(item.created_at).getTime() >
+                new Date(existing.created_at).getTime()
+            ) {
+                map.set(key, item);
+            }
+        }
 
-    // Generate exactly 7 days, including missing days
-    const chartData = Array.from({ length: 7 }, (_, i) => {
-        const date = new Date();
+        map.forEach((item) => {
+            if(item.id) {
+                totalDays += 1;
+            }
+            if(item.awakenings != null) {
+                awakenings += item.awakenings;
+            }
+            if(item.sleepDuration != null) {
+                sleepDuration += item.sleepDuration;
+            }
+            if(item.isGoodSleep) {
+                goodSleepDays += 1;
+            }
+        })
 
-        date.setHours(0, 0, 0, 0);
-        date.setDate(date.getDate() - (7 - i));
+        const averageAwakenings = totalDays > 0
+            ? awakenings / totalDays
+            : 0;
 
-        // Use local date instead of toISOString()
-        const dateString = [
-            date.getFullYear(),
-            String(date.getMonth() + 1).padStart(2, "0"),
-            String(date.getDate()).padStart(2, "0"),
-        ].join("-");
+        const averageSleepDuration = totalDays > 0
+            ? sleepDuration / totalDays
+            : 0;
 
-        const existing = data.daily.find(
-            (item) => item.date === dateString
-        );
 
         return {
-            day: date.toLocaleDateString("en-US", {
-                weekday: "short",
-            }),
-            date: dateString,
-            sleep_duration: existing?.sleep_duration ?? null,
-            awakenings: existing?.awakenings ?? null,
-            is_good_sleep: existing?.is_good_sleep ?? null,
-        };
-    });
+            averageAwakenings: averageAwakenings,
+            averageSleepDuration: averageSleepDuration,
+            goodSleepDays: goodSleepDays,
+            totalDays: totalDays,
+            days: [...map.values()].sort(
+                (a, b) =>
+                    new Date(a.created_at!).getTime() -
+                    new Date(b.created_at!).getTime()
+            )
+        }
+    }, [data]);
 
+    if(filtered!.days.length === 0) {
+        return (
+            <div className="flex w-[1200px] h-[230px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+                <h3 className="text-lg font-semibold text-gray-800">
+                    No History Yet
+                </h3>
+
+                <p className="mt-2 text-sm text-gray-600">
+                    Complete the form on the left, then click <strong>Submit</strong> to
+                    generate your sleep quality prediction.
+                </p>
+            </div>
+        );
+    }
+
+  
+ 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 w-full">
 
-            {/* Summary Cards */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
                 <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -110,22 +125,9 @@ export default function WeeklySummary() {
                     </p>
 
                     <p className="mt-2 text-3xl font-bold text-gray-800">
-                        {data.summary.average_sleep.toFixed(2)}
+                        {filtered.averageSleepDuration.toFixed(2)}
                         <span className="ml-1 text-base font-normal text-gray-500">
                             hrs
-                        </span>
-                    </p>
-                </div>
-
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <p className="text-sm text-gray-500">
-                        Good Sleep Days
-                    </p>
-
-                    <p className="mt-2 text-3xl font-bold text-green-600">
-                        {data.summary.good_days}
-                        <span className="ml-1 text-base font-normal text-gray-500">
-                            / 7 days
                         </span>
                     </p>
                 </div>
@@ -136,13 +138,26 @@ export default function WeeklySummary() {
                     </p>
 
                     <p className="mt-2 text-3xl font-bold text-gray-800">
-                        {data.summary.average_awakenings.toFixed(1)}
+                        {filtered.averageAwakenings.toFixed(1)}
                     </p>
                 </div>
 
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <p className="text-sm text-gray-500">
+                        Good Sleep Days
+                    </p>
+
+                    <p className="mt-2 text-3xl font-bold text-green-600">
+                        {filtered.goodSleepDays}
+                        <span className="ml-1 text-base font-normal text-gray-500">
+                            / {filtered.totalDays} days
+                        </span>
+                    </p>
+                </div>
+
+
             </div>
 
-            {/* Chart */}
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
 
                 <div className="mb-6">
@@ -158,7 +173,7 @@ export default function WeeklySummary() {
                 <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                            data={chartData}
+                            data={filtered.days}
                             margin={{
                                 top: 10,
                                 right: 10,
@@ -172,8 +187,9 @@ export default function WeeklySummary() {
                             />
 
                             <XAxis
-                                dataKey="day"
+                                dataKey="created_at"
                                 tick={{ fontSize: 12 }}
+                                tickFormatter={(value) => value.slice(0, 10)}
                             />
 
                             <YAxis
@@ -187,6 +203,7 @@ export default function WeeklySummary() {
                             />
 
                             <Tooltip
+                                labelFormatter={(value) => value?.toString().slice(0, 10)}
                                 formatter={(value) =>
                                     value !== null
                                         ? [`${value} hrs`, "Sleep Duration"]
@@ -195,7 +212,7 @@ export default function WeeklySummary() {
                             />
 
                             <Bar
-                                dataKey="sleep_duration"
+                                dataKey="sleepDuration"
                                 fill="#4f46e5"
                                 radius={[6, 6, 0, 0]}
                             />
@@ -206,5 +223,6 @@ export default function WeeklySummary() {
             </div>
 
         </div>
+       
     );
 }

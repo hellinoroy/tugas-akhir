@@ -1,16 +1,18 @@
-// TODO: CRUD buat history, buat halaman tabel buat nampilin semua history
+// Konsistensi menggunakan standard deviation, taro di summary
 import { useEffect, useState } from "react";
 import { api } from "~/root";
 
 import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
+import SleepImprovementRecommendations from "~/components/dashboard/home/recommendation";
 
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
 import WeeklySummary from "~/components/dashboard/home/weekly-summary";
-// import type { LastSevenDaysProps } from "~/components/dashboard/home/weekly-tracker";
+import SleepQualityDistribution from "~/components/dashboard/home/distribution";
+// import SleepConsistency from "~/components/dashboard/home/consistency";
+
 
 export default function DashboardHome() {
-
     const [trackerData, setTrackerData] = useState<Tracker>();
     const [historyData, setHistoryData] = useState<TrackerAPI>();
 
@@ -25,10 +27,10 @@ export default function DashboardHome() {
                 const today = new Date();
 
                 const endDate = new Date(today);
-                endDate.setDate(today.getDate() - 1); // yesterday
+                endDate.setDate(today.getDate() - 1); 
 
                 const startDate = new Date(today);
-                startDate.setDate(today.getDate() - 7); // 7 days ago
+                startDate.setDate(today.getDate() - 7);
 
                 const response = await api.get("/sleep/tracker", {
                     params: {
@@ -36,10 +38,8 @@ export default function DashboardHome() {
                         end_date: endDate.toISOString().split("T")[0],
                     },
                 });
-
-                if (response) {
-                    setHistoryData(response.data);
-                }
+                setHistoryData(response.data);
+              
             } catch (error) {
                 console.error(error);
             }
@@ -51,16 +51,16 @@ export default function DashboardHome() {
     }, [])
 
 
-
-
     return (
-        <div>
-            <div className="">
+        <div className="flex flex-col">
+            <div className="flex flex-row">
                 <TrackerCard data={ trackerData } />
-                <WeeklyTracker />
-                <WeeklySummary />
+                <WeeklyTracker data={ historyData } />
             </div>
 
+            <WeeklySummary data={ historyData } />
+            {/* <SleepImprovementRecommendations /> 
+            <SleepQualityDistribution /> */}
         </div>
     );
 }
