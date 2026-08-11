@@ -140,9 +140,13 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
     return (
         <div className="space-y-6 w-full">
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 text-center">
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="
+                    rounded-xl border border-gray-200 
+                    bg-white p-5 shadow-sm 
+                    flex-col justify-center content-center
+                ">
                     <p className="text-sm text-gray-500">
                         Average Sleep
                     </p>
@@ -155,7 +159,11 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="
+                    rounded-xl border border-gray-200 
+                    bg-white p-5 shadow-sm
+                    flex-col justify-center content-center
+                ">
                     <p className="text-sm text-gray-500">
                         Average Awakenings
                     </p>
@@ -165,7 +173,11 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="
+                    rounded-xl border border-gray-200 
+                    bg-white p-5 shadow-sm
+                    flex-col justify-center content-center
+                ">
                     <p className="text-sm text-gray-500">
                         Good Sleep Days
                     </p>
@@ -178,7 +190,11 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="
+                    rounded-xl border border-gray-200 
+                    bg-white p-5 shadow-sm
+                    flex-col justify-center content-center
+                ">
                     <p className="text-sm text-gray-500">
                         Sleep Duration Standard Deviation
                     </p>
@@ -188,7 +204,11 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="
+                    rounded-xl border border-gray-200 
+                    bg-white p-5 shadow-sm
+                    flex-col justify-center content-center
+                ">
                     <p className="text-sm text-gray-500">
                         Wakup Standard Deviation
                     </p>
@@ -198,7 +218,11 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="
+                    rounded-xl border border-gray-200 
+                    bg-white p-5 shadow-sm
+                    flex-col justify-center content-center
+                ">
                     <p className="text-sm text-gray-500">
                         Bedtime Standard Deviation
                     </p>

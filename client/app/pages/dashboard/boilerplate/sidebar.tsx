@@ -27,15 +27,17 @@ export default function Sidebar({
     };
 
     return (
-        <aside
+        <div
             className={`
-                z-50
+                absolute top-16 left-0 z-auto
+                bg-teal-100 w-full
+                transition-all duration-300
                 ${menuOpen ? "h-[224px]" : "h-0"}
+
+                sm:relative
+                sm:top-auto sm:left-auto
                 sm:h-[calc(100vh-4rem)]
                 ${menuOpen ? "sm:w-64" : "sm:w-[56px]"}
-                bg-teal-100 shrink-0
-                flex-col sm:flex
-                transition-all duration-300
             `}
         >
             <button
@@ -110,6 +112,6 @@ export default function Sidebar({
                 </a>
 
             </nav>
-        </aside>
+        </div>
     );
 }
