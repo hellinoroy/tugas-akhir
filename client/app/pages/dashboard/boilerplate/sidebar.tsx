@@ -1,50 +1,67 @@
 import { NavLink, useNavigate } from "react-router";
-import { ClipboardDocumentListIcon, ClipboardDocumentCheckIcon, ChartPieIcon, PowerIcon, Bars3Icon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { 
+    ClipboardDocumentListIcon, ClipboardDocumentCheckIcon, 
+    ChartPieIcon, PowerIcon, 
+    Bars3Icon, ArrowLeftIcon, 
+} from "@heroicons/react/24/outline";
 import { api } from "~/root";
 import { useState } from "react";
 
 // TODO: show icons when collapsed instead of dissapearing 
+interface SidebarProps {
+    menuOpen: boolean;
+    setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export default function Sidebar() {
-    const [menuOpen, setMenuOpen] = useState(true);
-    const navigate = useNavigate(); 
+export default function Sidebar({
+    menuOpen,
+    setMenuOpen,
+}: SidebarProps) {
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
-        localStorage.removeItem('access_token');
+        localStorage.removeItem("access_token");
         await api.post("/auth/logout");
-        
-        navigate('/')
-    }
 
+        navigate("/");
+    };
 
     return (
-        <aside 
+        <aside
             className={`
-                h-[calc(100vh-4rem)] bg-teal-100 shrink-0 flex flex-col 
-            
+                z-50
+                ${menuOpen ? "h-[224px]" : "h-0"}
+                sm:h-[calc(100vh-4rem)]
+                ${menuOpen ? "sm:w-64" : "sm:w-[56px]"}
+                bg-teal-100 shrink-0
+                flex-col sm:flex
                 transition-all duration-300
-                ${menuOpen ? "w-64" : "w-[56px]"}`
-            }
+            `}
         >
             <button
-                className="self-end cursor-pointer p-4"
+                className="hidden sm:flex self-end cursor-pointer p-4"
                 onClick={() => setMenuOpen(!menuOpen)}
             >
-                {menuOpen ? <ArrowLeftIcon className="size-6" /> : <Bars3Icon className="size-6" />}
-                
+                {menuOpen ? (
+                    <ArrowLeftIcon className="size-6 hidden sm:block" />
+                ) : (
+                    <Bars3Icon className="size-6 hidden sm:block" />
+                )}
+
+     
             </button>
 
-            <nav 
+            <nav
                 className={`
                     flex flex-col h-full items-center
                     transition-opacity duration-300
-                    ${menuOpen
-                        ? "opacity-100 visible delay-150"
-                        : "opacity-0 invisible"
+                    ${
+                        menuOpen
+                            ? "opacity-100 visible delay-150"
+                            : "opacity-0 invisible"
                     }
                 `}
             >
-
                 <NavLink
                     to="/dashboard"
                     end
@@ -78,16 +95,20 @@ export default function Sidebar() {
                     <ClipboardDocumentCheckIcon className="px-2 text-sm size-12" />
                     Sleep Quality Prediction
                 </NavLink>
-
                 
                 <a
                     onClick={handleLogout}
                     href="#"
-                    className="h-14 w-full mt-auto leading-[3.5rem] bg-red-600 text-white border-l-[2px] border-red-600 flex flex-row items-center font-bold text-xl"
+                    className="
+                        h-14 w-full mt-auto leading-[3.5rem] 
+                        bg-red-600 text-white border-l-[2px] 
+                        border-red-600 flex flex-row items-center font-bold text-xl
+                    "
                 >
                     <PowerIcon className="px-2 text-sm size-12" />
                     Logout
                 </a>
+
             </nav>
         </aside>
     );

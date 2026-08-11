@@ -10,6 +10,7 @@ import type { User } from "~/context/user-context";
 
 
 export default function Boilerplate() {
+    const [menuOpen, setMenuOpen] = useState(false);
     const [user, setUser] = useState<User>({
         name: "",
         age: 0,
@@ -45,12 +46,18 @@ export default function Boilerplate() {
     return (
         <UserContext value={user}>
             <div className="flex h-screen flex-col">
-                <Header />
+                <Header
+                    menuOpen={menuOpen}
+                    setMenuOpen={setMenuOpen}
+                />
 
-                <div className="flex flex-1 overflow-hidden">
-                    <Sidebar />
+                <div className="flex flex-col sm:flex-row min-h-0 flex-1">
+                    <Sidebar
+                        menuOpen={menuOpen}
+                        setMenuOpen={setMenuOpen}
+                    />
 
-                    <main className="flex-1 min-h-0 overflow-y-auto">
+                    <main className="min-h-0 flex-1 overflow-y-auto">
                         <Outlet />
                     </main>
                 </div>
