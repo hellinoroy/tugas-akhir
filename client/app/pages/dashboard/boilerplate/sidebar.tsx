@@ -29,14 +29,15 @@ export default function Sidebar({
     return (
         <div
             className={`
-                absolute top-16 left-0 z-auto
+                absolute top-16 left-0 z-50
                 bg-teal-100 w-full
                 transition-all duration-300
                 ${menuOpen ? "h-[224px]" : "h-0"}
 
-                sm:relative
-                sm:top-auto sm:left-auto
-                sm:h-[calc(100vh-4rem)]
+                sm:relative sm:top-auto
+                sm:left-auto sm:z-auto
+                sm:flex sm:flex-col
+                sm:shrink-0 sm:h-[calc(100vh-4rem)]
                 ${menuOpen ? "sm:w-64" : "sm:w-[56px]"}
             `}
         >
@@ -102,8 +103,8 @@ export default function Sidebar({
                     onClick={handleLogout}
                     href="#"
                     className="
-                        h-14 w-full mt-auto leading-[3.5rem] 
-                        bg-red-600 text-white border-l-[2px] 
+                        h-14 w-full leading-[3.5rem] 
+                        bg-red-600 text-white border-l-[2px] sm:mt-auto
                         border-red-600 flex flex-row items-center font-bold text-xl
                     "
                 >
