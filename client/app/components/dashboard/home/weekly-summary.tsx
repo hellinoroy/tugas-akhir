@@ -12,37 +12,41 @@ import {
 } from "recharts";
 import type { Tracker, TrackerAPIProp } from "./tracker-card";
 
-type WeeklyDaily = {
-    date: string;
-    sleep_duration: number;
-    awakenings: number;
-    is_good_sleep: boolean;
+function timeToHours(time: string): number {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours + minutes / 60;
 }
 
-type WeeklySummaryData = {
-    average_sleep: number;
-    good_days: number;
-    poor_days: number;
-    average_awakenings: number;
-}
+function standardDeviation(values: number[]): number {
+    if (values.length === 0) {
+        return 0;
+    }
 
-type WeeklyReport =  {
-    summary: WeeklySummaryData;
-    daily: WeeklyDaily[];
+    const mean =
+        values.reduce((sum, value) => sum + value, 0) / values.length;
+
+    const variance =
+        values.reduce(
+            (sum, value) => sum + Math.pow(value - mean, 2),
+            0
+        ) / values.length;
+
+    return Math.sqrt(variance);
 }
 
 export default function WeeklySummary( { data } : TrackerAPIProp ) {
 
     const filtered = useMemo(() => {
+        const bedtimeValues: number[] = [];
+        const wakeupValues: number[] = [];
+        const sleepDurationValues: number[] = [];
+        const awakeningsValues: number[] = [];
+
         const map = new Map<string, Tracker>();
-        let awakenings = 0;
-        let sleepDuration = 0;
+
         let goodSleepDays = 0;
-        let totalDays = 0;
+
         for (const item of data?.items ?? []) {
-            if (!item.created_at) {
-                continue;
-            }
 
             const key = item.created_at.slice(0, 10);
             const existing = map.get(key);
@@ -61,34 +65,53 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
         }
 
         map.forEach((item) => {
-            if(item.id) {
-                totalDays += 1;
+            if (item.sleepDuration != null) {
+                sleepDurationValues.push(item.sleepDuration);
             }
-            if(item.awakenings != null) {
-                awakenings += item.awakenings;
+
+            if (item.awakenings != null) {
+                awakeningsValues.push(item.awakenings);
             }
-            if(item.sleepDuration != null) {
-                sleepDuration += item.sleepDuration;
+
+            if (item.bedtime) {
+                bedtimeValues.push(timeToHours(item.bedtime));
             }
-            if(item.isGoodSleep) {
+
+            if (item.wakeup) {
+                wakeupValues.push(timeToHours(item.wakeup));
+            }
+
+            if (item.isGoodSleep) {
                 goodSleepDays += 1;
             }
-        })
+        });
 
-        const averageAwakenings = totalDays > 0
-            ? awakenings / totalDays
-            : 0;
+        const averageSleepDuration =
+            sleepDurationValues.length > 0
+                ? sleepDurationValues.reduce((sum, value) => sum + value, 0) /
+                  sleepDurationValues.length
+                : 0;
 
-        const averageSleepDuration = totalDays > 0
-            ? sleepDuration / totalDays
-            : 0;
+        const averageAwakenings =
+            awakeningsValues.length > 0
+                ? awakeningsValues.reduce((sum, value) => sum + value, 0) /
+                  awakeningsValues.length
+                : 0;
 
+        const sleepDurationSD = standardDeviation(sleepDurationValues);
+        const bedtimeSD = standardDeviation(bedtimeValues);
+        const wakeupSD = standardDeviation(wakeupValues);
+        const awakeningsSD = standardDeviation(awakeningsValues);
 
         return {
-            averageAwakenings: averageAwakenings,
-            averageSleepDuration: averageSleepDuration,
-            goodSleepDays: goodSleepDays,
-            totalDays: totalDays,
+            averageAwakenings,
+            averageSleepDuration,
+            goodSleepDays,
+            totalDays: sleepDurationValues.length,
+            sleepDurationSD,
+            bedtimeSD,
+            wakeupSD,
+            awakeningsSD,
             days: [...map.values()].sort(
                 (a, b) =>
                     new Date(a.created_at!).getTime() -
@@ -152,6 +175,36 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                         <span className="ml-1 text-base font-normal text-gray-500">
                             / {filtered.totalDays} days
                         </span>
+                    </p>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <p className="text-sm text-gray-500">
+                        Sleep Duration Standard Deviation
+                    </p>
+
+                    <p className="mt-2 text-3xl font-bold text-green-600">
+                        {filtered.sleepDurationSD.toFixed(2)}
+                    </p>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <p className="text-sm text-gray-500">
+                        Wakup Standard Deviation
+                    </p>
+
+                    <p className="mt-2 text-3xl font-bold text-green-600">
+                        {filtered.wakeupSD.toFixed(2)}
+                    </p>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <p className="text-sm text-gray-500">
+                        Bedtime Standard Deviation
+                    </p>
+
+                    <p className="mt-2 text-3xl font-bold text-green-600">
+                        {filtered.bedtimeSD.toFixed(2)}
                     </p>
                 </div>
 
