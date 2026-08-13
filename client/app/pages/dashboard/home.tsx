@@ -52,15 +52,14 @@ export default function DashboardHome() {
 
 
     return (
-        <div className="flex flex-col sm:m-10 my-2 @container">
+        <div className="flex flex-col sm:m-10 my-2 @container items-center gap-8">
             <div className="flex flex-col items-center flex-1 @5xl:flex-row gap-8">
                 <TrackerCard data={ trackerData } />
                 <WeeklySummary data={ historyData } />
             </div>
-            {/* <WeeklyTracker data={ historyData } /> */}
-            
-            {/* <SleepImprovementRecommendations /> 
-            <SleepQualityDistribution /> */}
+            <WeeklyTracker data={ historyData } />
+            {/* <SleepImprovementRecommendations />  */}
+            {/* <SleepQualityDistribution /> */}
         </div>
     );
 }

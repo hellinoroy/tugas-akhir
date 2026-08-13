@@ -1,14 +1,14 @@
 export type Tracker = {
-    id?: number | null,
+    id: number | null,
     bedtime: string | null,
-    wakeup:string | null,
-    sleepDuration:number | null,
+    wakeup: string | null,
+    sleepDuration: number | null,
     sleepEfficiency: number | null,
     awakenings: number | null,
     timeInBed: number | null,
     isGoodSleep: boolean | null,
-    created_at?: string | null,
-    updated_at?: string | null,
+    created_at: string,
+    updated_at: string | null,
 };
 
 export type TrackerAPI = {
@@ -16,6 +16,10 @@ export type TrackerAPI = {
     page: number,
     page_size: number,
     total:number,
+}
+
+export type TrackerAPIProp = {
+    data: TrackerAPI | undefined
 }
 
 type TrackerCardProp = {
@@ -26,7 +30,13 @@ type TrackerCardProp = {
 export default function TrackerCard( { data } : TrackerCardProp) {
     if(!data) {
         return (
-            <div className="flex h-[660px] w-[430px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+            <div className="
+                flex h-[660px] 
+                w-full sm:min-w-[430px] sm:w-[430px] 
+                flex-col items-center justify-center 
+                rounded-xl border-2 border-dashed border-gray-300 
+                bg-gray-50 p-8 text-center
+            ">
                 <h3 className="text-lg font-semibold text-gray-800">
                     No Today's Assesment Yet
                 </h3>
@@ -40,7 +50,11 @@ export default function TrackerCard( { data } : TrackerCardProp) {
     }
 
     return (
-        <div className="w-[430px] my-5 rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm flex flex-col ">
+        <div className="
+            w-full sm:min-w-[430px] sm:w-[430px] my-5 rounded-lg 
+            border border-gray-200 bg-white p-4 text-left 
+            shadow-sm flex flex-col
+        ">
 
             <div
                 className={`rounded-xl border p-5 ${

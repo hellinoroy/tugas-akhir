@@ -119,23 +119,6 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
             )
         }
     }, [data]);
-
-    if(filtered!.days.length === 0) {
-        return (
-            <div className="flex w-[1200px] h-[230px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
-                <h3 className="text-lg font-semibold text-gray-800">
-                    No History Yet
-                </h3>
-
-                <p className="mt-2 text-sm text-gray-600">
-                    Complete the form on the left, then click <strong>Submit</strong> to
-                    generate your sleep quality prediction.
-                </p>
-            </div>
-        );
-    }
-
-  
  
     return (
         <div className="space-y-6 w-full">
