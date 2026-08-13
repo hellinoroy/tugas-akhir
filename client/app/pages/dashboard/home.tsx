@@ -8,8 +8,7 @@ import SleepImprovementRecommendations from "~/components/dashboard/home/recomme
 
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
 import WeeklySummary from "~/components/dashboard/home/weekly-summary";
-import SleepQualityDistribution from "~/components/dashboard/home/distribution";
-// import SleepConsistency from "~/components/dashboard/home/consistency";
+
 
 
 export default function DashboardHome() {
@@ -57,9 +56,9 @@ export default function DashboardHome() {
                 <TrackerCard data={ trackerData } />
                 <WeeklySummary data={ historyData } />
             </div>
+            <SleepImprovementRecommendations data={ historyData } /> 
             <WeeklyTracker data={ historyData } />
-            {/* <SleepImprovementRecommendations />  */}
-            {/* <SleepQualityDistribution /> */}
+        
         </div>
     );
 }
