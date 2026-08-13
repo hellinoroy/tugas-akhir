@@ -6,7 +6,7 @@ import { UserContext } from "~/context/user-context";
 import { api } from "~/root";
 import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
-import type { Tracker } from "~/components/dashboard/home/tracker-card";
+import type { Tracker, TrackerAPI } from "~/components/dashboard/home/tracker-card";
 
 export default function DashboardAssessment() {
     
@@ -17,6 +17,8 @@ export default function DashboardAssessment() {
     const [timeInBed, setTimeInBed]= useState(0);
     const [assessed, setAssessed] = useState(false);
     const [loading, setLoading] = useState(true);
+    
+    const [historyData, setHistoryData] = useState<TrackerAPI>();
 
     let sleepDuration: number = 0;
     if(bedtime && wakeup) {
@@ -56,6 +58,7 @@ export default function DashboardAssessment() {
 
 
     const trackerData: Tracker = {
+        id: null,
         bedtime,
         wakeup,
         sleepDuration,
@@ -63,6 +66,8 @@ export default function DashboardAssessment() {
         awakenings,
         timeInBed,
         isGoodSleep,
+        created_at: Date.now().toString(),
+        updated_at: null,
     };
 
 
@@ -88,7 +93,31 @@ export default function DashboardAssessment() {
 
         }
 
+        const fetchWeekly = async () => {
+            try {
+                const today = new Date();
+
+                const endDate = new Date(today);
+                endDate.setDate(today.getDate() - 1); 
+
+                const startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7);
+
+                const response = await api.get("/sleep/tracker", {
+                    params: {
+                        start_date: startDate.toISOString().split("T")[0],
+                        end_date: endDate.toISOString().split("T")[0],
+                    },
+                });
+                setHistoryData(response.data);
+              
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         fetchToday();
+        fetchWeekly();
 
     }, [])
 
@@ -125,8 +154,8 @@ export default function DashboardAssessment() {
     };  
 
     return (
-        <div className="flex flex-col items-center overflow-scroll">
-            <div className="flex flex-row h-full justify-center items-center gap-10 my-20">
+        <div className="flex flex-col items-center overflow-scroll @container">
+            <div className="flex flex-col @5xl:flex-row h-full justify-center items-center gap-10 my-20">
                 <form 
                     className="w-full max-w-md  flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl space-y-6"
                     onSubmit={handleSubmit}
@@ -219,13 +248,13 @@ export default function DashboardAssessment() {
                 </form>
 
                 {assessed ? (
-                    <TrackerCard data={trackerData}/>
+                    <TrackerCard data={ trackerData }/>
                 ) : (
                     <TrackerCard data={undefined} />
                 )}
                 
             </div>
-            <WeeklyTracker />
+            <WeeklyTracker data={ historyData } />
         </div>
 
     );
