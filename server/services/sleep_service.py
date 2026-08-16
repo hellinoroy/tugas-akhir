@@ -119,7 +119,6 @@ def get_tracker(
         "page_size": page_size,
     }
 
-
 def get_weekly_summary_service(
     db: Session,
     token: str,
@@ -199,7 +198,6 @@ def get_weekly_summary_service(
             for tracker in trackers
         ],
     }
-
 
 def post_tracker_test(
     data: TrackerRequest,
@@ -287,8 +285,63 @@ def delete_tracker(
 
     return tracker
     
+def get_sleep_quality_by_age (
+    db: Session,
+): 
+    items = db.execute(
+        text("""
+            WITH latest_trackers AS (
+                SELECT DISTINCT ON (user_id)
+                    user_id,
+                    "isGoodSleep",
+                    created_at
+                FROM trackers
+                ORDER BY user_id, created_at DESC
+            ),
+            user_ages AS (
+                SELECT 
+                    id,
+                    EXTRACT(YEAR FROM AGE(dob)) AS age
+                FROM users
+            )
+            SELECT 
+                ua.age,
+                lt."isGoodSleep",
+                COUNT(lt.user_id) AS user_count
+            FROM latest_trackers lt
+            JOIN user_ages ua ON ua.id = lt.user_id
+            GROUP BY ua.age, lt."isGoodSleep"
+            ORDER BY ua.age, lt."isGoodSleep";
+        """)
+    ).mappings().all()
+    return {
+        "items": items,
+    }
 
-
-
-
+def get_sleep_quality_by_gender (
+    db: Session,
+): 
+    items = db.execute(
+        text("""
+            WITH latest_trackers AS (
+                SELECT DISTINCT ON (user_id)
+                    user_id,
+                    "isGoodSleep",
+                    created_at
+                FROM trackers
+                ORDER BY user_id, created_at DESC
+            )
+            SELECT 
+                u.gender,
+                lt."isGoodSleep",
+                COUNT(lt.user_id) AS user_count
+            FROM latest_trackers lt
+            JOIN users u ON u.id = lt.user_id
+            GROUP BY u.gender, lt."isGoodSleep"
+            ORDER BY u.gender, lt."isGoodSleep";
+        """)
+    ).mappings().all()
+    return {
+        "items": items,
+    }
 

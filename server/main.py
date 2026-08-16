@@ -1,10 +1,9 @@
 # TODO:
 #   notification/toast in frontend
-#   PRIORTY the prediction stuff
-#   PRIORTY them graph  
+#   PRIORTY them graph 
 #   account page
-#   guard route
-#   refresh token
+#   check the prediction stuff
+#   theres a bug with the sleep duration post tracker
 
 
 

@@ -10,6 +10,8 @@ from services.sleep_service import (
     post_tracker,
     put_tracker_service,
     delete_tracker,
+    get_sleep_quality_by_age,
+    get_sleep_quality_by_gender
 )
 from routers.auth import oauth2_scheme
 from datetime import date
@@ -48,8 +50,6 @@ def get_weekly_summary(
     token: str = Depends(oauth2_scheme),
 ):
     return get_weekly_summary_service(db, token)
-
-
 
 @router.post('/tracker', status_code=status.HTTP_201_CREATED)
 def daily_tracker(data: TrackerRequest, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
@@ -100,3 +100,15 @@ def delete_tracker_route(
         "message": "Tracker deleted successfully",
         "id": id
     }
+
+@router.get("/tracker/get-sleep-qualities-by-age")
+def get_sleep_quality_histogram_by_age(
+    db: Session = Depends(get_db)
+):
+    return get_sleep_quality_by_age(db)
+
+@router.get("/tracker/get-sleep-qualities-by-gender")
+def get_sleep_quality_histogram_by_gender(
+    db: Session = Depends(get_db)
+):
+    return get_sleep_quality_by_gender(db)
