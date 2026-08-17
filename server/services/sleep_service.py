@@ -299,23 +299,33 @@ def get_sleep_quality_by_age (
                 ORDER BY user_id, created_at DESC
             ),
             user_ages AS (
-                SELECT 
+                SELECT
                     id,
-                    EXTRACT(YEAR FROM AGE(dob)) AS age
+                    EXTRACT(YEAR FROM AGE(dob))::int AS age
                 FROM users
             )
-            SELECT 
+            SELECT
                 ua.age,
-                lt."isGoodSleep",
-                COUNT(lt.user_id) AS user_count
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = true
+                ) AS "goodSleep",
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = false
+                ) AS "badSleep"
+
             FROM latest_trackers lt
-            JOIN user_ages ua ON ua.id = lt.user_id
-            GROUP BY ua.age, lt."isGoodSleep"
-            ORDER BY ua.age, lt."isGoodSleep";
+            JOIN user_ages ua
+                ON ua.id = lt.user_id
+
+            GROUP BY ua.age
+            ORDER BY ua.age;
         """)
     ).mappings().all()
+ 
     return {
-        "items": items,
+        "data": items,
     }
 
 def get_sleep_quality_by_gender (
@@ -331,17 +341,28 @@ def get_sleep_quality_by_gender (
                 FROM trackers
                 ORDER BY user_id, created_at DESC
             )
-            SELECT 
+            SELECT
                 u.gender,
-                lt."isGoodSleep",
-                COUNT(lt.user_id) AS user_count
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = true
+                ) AS "goodSleep",
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = false
+                ) AS "badSleep"
+
             FROM latest_trackers lt
-            JOIN users u ON u.id = lt.user_id
-            GROUP BY u.gender, lt."isGoodSleep"
-            ORDER BY u.gender, lt."isGoodSleep";
+            JOIN users u
+                ON u.id = lt.user_id
+
+            GROUP BY u.gender
+            ORDER BY u.gender;
         """)
     ).mappings().all()
+
+
     return {
-        "items": items,
+        "data": items,
     }
 

@@ -8,6 +8,7 @@ import SleepImprovementRecommendations from "~/components/dashboard/home/recomme
 
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
 import WeeklySummary from "~/components/dashboard/home/weekly-summary";
+import Histogram from "~/components/dashboard/home/histogram";
 
 
 
@@ -58,6 +59,7 @@ export default function DashboardHome() {
             </div>
             <SleepImprovementRecommendations data={ historyData } /> 
             <WeeklyTracker data={ historyData } />
+            <Histogram />
         
         </div>
     );
