@@ -3,9 +3,8 @@
 #   PRIORTY them graph 
 #   account page
 #   check the prediction stuff
-#   theres a bug with the sleep duration post tracker
-
-
+#   theres a bug with the sleep duration post tracker, exceed 1 day ?
+#   pake redis buat histogram kualitas tidur kalo rajin
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,9 +13,6 @@ from database import (Base, engine)
 from routers.auth import (router as auth_router)
 from routers.ml import (router as ml_router)
 from routers.sleep import (router as sleep_router)
-# from routers.product import (router as product_router)
-# from routers.product_detail import (router as product_detail_router)
-# from routers.comment import (router as comment_router)
 
 app = FastAPI()
 app.add_middleware(
@@ -33,5 +29,3 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(ml_router)
 app.include_router(sleep_router)
-# app.include_router(product_detail_router)
-# app.include_router(comment_router)

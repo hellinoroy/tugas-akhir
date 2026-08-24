@@ -11,3 +11,9 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
     
+class UserProfileUpdate(BaseModel):
+    name: str
+    email: EmailStr
+    dob: str
+    gender: str
+    

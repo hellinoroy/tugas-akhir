@@ -17,7 +17,8 @@ export default [
         index('./pages/dashboard/home.tsx'),
         route('tracker', './pages/dashboard/tracker.tsx'),
         route('predict', './pages/dashboard/predict.tsx'),
-        route('history', './pages/dashboard/history.tsx')
+        route('history', './pages/dashboard/history.tsx'),
+        route('edit-profile', './pages/dashboard/edit-profile.tsx')
     ]),
 
 

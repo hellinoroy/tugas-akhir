@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.user import User
-from schemas.auth import RegisterRequest
+from schemas.auth import RegisterRequest, UserProfileUpdate
 from fastapi import  HTTPException, Response, status
 from security import (
     hash_password,
@@ -91,6 +91,29 @@ def logout(response: Response):
     )
     return {"message": "Logged out"}
 
+def edit_profile(
+    data: UserProfileUpdate,
+    db: Session,
+    token: str
+):
+    user_id = check_token(token)
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    user.name = data.name
+    user.email = data.email
+    user.gender = data.gender
+    user.dob = data.dob
+
+    db.commit()
+    return {
+        "message": "User updated"
+    }
 
 def get_current_user(
     token: str,

@@ -45,11 +45,9 @@ export default function DashboardHome() {
             }
         };
 
-
         fetchToday();
         fetchWeekly();
     }, [])
-
 
     return (
         <div className="flex flex-col sm:m-10 my-2 @container items-center gap-8">

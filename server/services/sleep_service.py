@@ -348,7 +348,7 @@ def get_sleep_quality_by_gender (
                     WHERE lt."isGoodSleep" = true
                 ) AS "goodSleep",
 
-                COUNT(*) FILTER (
+                COUNT(*) FILTER (   
                     WHERE lt."isGoodSleep" = false
                 ) AS "badSleep"
 

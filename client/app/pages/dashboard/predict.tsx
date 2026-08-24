@@ -160,7 +160,6 @@ export default function DashboardPrediction() {
 
                             <hr />
 
-
                             {status == "none" ? (
                                 <div>
                                     <p className="mb-4 text-sm text-gray-600">
@@ -249,9 +248,6 @@ export default function DashboardPrediction() {
                     </div>
                 )}
             </div>
-  
-           
-
         </div>
     );
 }
