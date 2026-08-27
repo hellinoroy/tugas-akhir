@@ -7,6 +7,7 @@ import { Outlet } from "react-router";
 
 import { UserContext } from "~/context/user-context";
 import type { User } from "~/context/user-context";
+import { Bounce, ToastContainer } from "react-toastify";
 
 
 export default function Boilerplate() {
@@ -62,6 +63,19 @@ export default function Boilerplate() {
                     </main>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
         </UserContext>
     )
 }

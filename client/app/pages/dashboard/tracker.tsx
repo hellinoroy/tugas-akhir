@@ -7,6 +7,7 @@ import { api } from "~/root";
 import TrackerCard from "~/components/dashboard/home/tracker-card";
 import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
 import type { Tracker, TrackerAPI } from "~/components/dashboard/home/tracker-card";
+import { toast } from "react-toastify";
 
 export default function DashboardAssessment() {
     
@@ -22,19 +23,12 @@ export default function DashboardAssessment() {
 
     let sleepDuration: number = 0;
     if(bedtime && wakeup) {
-        const [startHour, startMinute] = bedtime.split(":").map(Number);
-        const [endHour, endMinute] = wakeup.split(":").map(Number);
-        const start = startHour * 60 + startMinute;
-        let end = endHour * 60 + endMinute;
+        const start = new Date(bedtime).getTime();
+        const end = new Date(wakeup).getTime();
+        const diffMs = end - start;
 
-        let diff = end - start;
-        
-        if (diff < 0) {
-            end += 24 * 60;
-            diff = end - start;
-        }
+        sleepDuration = diffMs / (1000 * 60 * 60);
 
-        sleepDuration = (diff / 60);
     }
 
     const sleepEfficiency =
@@ -55,7 +49,6 @@ export default function DashboardAssessment() {
             sleepDuration <= 8 &&
             awakenings <= 2 &&
             sleepEfficiency >= 0.875);
-
 
     const trackerData: Tracker = {
         id: null,
@@ -131,25 +124,27 @@ export default function DashboardAssessment() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
+        if(sleepDuration < 0) {
+            toast.error('Wakeup cannot be less than bedtime');
+            return;
+        }
 
-        if (bedtime && wakeup && (timeInBed >= sleepDuration)) {
+        if(timeInBed <= sleepDuration) {
+            toast.error('Total time in bed cannot be less than sleep duration');
+            return;
+        }
+
+        if (bedtime && wakeup) {
             const payload = {
                 wakeup, bedtime, sleepDuration, sleepEfficiency, awakenings, timeInBed, isGoodSleep
             };
-            
-            const response = await api.post("/sleep/tracker", payload);
-            console.log(response);
 
+            const response = await api.post("/sleep/tracker", payload);
+            toast.success(response.data.message);
             setAssessed(true);
 
-            
         } else {
-            console.log(bedtime);
-            console.log(wakeup);
-            console.log(timeInBed);
-            console.log(sleepDuration);
-            console.log(timeInBed >= sleepDuration);
-            console.log("fill out bud");
+            toast.error('An error has occured');
         }
     };  
 
@@ -157,7 +152,7 @@ export default function DashboardAssessment() {
         <div className="flex flex-col items-center overflow-scroll @container">
             <div className="flex flex-col @5xl:flex-row h-full justify-center items-center gap-10 my-20">
                 <form 
-                    className="w-full max-w-md  flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl space-y-6"
+                    className="w-full max-w-lg  flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl space-y-6"
                     onSubmit={handleSubmit}
                 >
                     <div>
@@ -172,35 +167,49 @@ export default function DashboardAssessment() {
 
                     <hr className="border-gray-100" />
 
-                    <div className="flex justify-evenly flex-row gap-5 ">
+                    <div className="flex flex-col gap-5">
+                        <div className="flex flex-row gap-5">
+                            <div className="flex flex-col flex-1 space-y-2">
+                                <label className="text-sm font-semibold text-gray-700">
+                                    Bedtime
+                                </label>
 
-                        <div className="flex flex-col flex-1 space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">
-                                Bedtime
-                            </label>
+                                <input
+                                    type="datetime-local"
+                                    disabled={assessed}
+                                    onChange={(e) => setBedtime(e.target.value)}
+                                    value={bedtime}
+                                    className="w-full rounded-lg border border-gray-300 px-2 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                                />
+                            </div>
 
-                            <input
-                                type="time"
-                                disabled={assessed}
-                                onChange={(e) => setBedtime(e.target.value)}
-                                value={bedtime}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                            />
+                            <div className="flex flex-col flex-1 space-y-2">
+                                <label className="text-sm font-semibold text-gray-700">
+                                    Wake-up Time
+                                </label>
+
+                                <input
+                                    type="datetime-local"
+                                    disabled={assessed}
+                                    onChange={(e) => setWakeup(e.target.value)}
+                                    value={wakeup}
+                                    className="w-full rounded-lg border border-gray-300 px-2 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                                />
+                            </div>
                         </div>
+                    </div>
 
-                        <div className="flex flex-col flex-1 space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">
-                                Wake-up Time
-                            </label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">
+                            Sleep Duration (hours)
+                        </label>
 
-                            <input
-                                type="time"
-                                disabled={assessed}
-                                onChange={(e) => setWakeup(e.target.value)}
-                                value={wakeup}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                            />
-                        </div>
+                        <input
+                            type="string"
+                            disabled={true}
+                            value={sleepDuration.toFixed(2)}
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 bg-gray-300"
+                        />
                     </div>
 
                     <div className="space-y-2">
