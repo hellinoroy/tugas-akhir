@@ -63,7 +63,6 @@ export default function DashboardAssessment() {
         updated_at: null,
     };
 
-
     useEffect(() => {
         setLoading(true);
         const fetchToday = async () => {
@@ -122,7 +121,7 @@ export default function DashboardAssessment() {
         )
     }
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
         if(sleepDuration < 0) {
             toast.error('Wakeup cannot be less than bedtime');
@@ -161,7 +160,7 @@ export default function DashboardAssessment() {
                         </h2>
 
                         <p className="mt-1 text-sm text-gray-500 text-center">
-                            Track your sleep and assess your sleep quality.
+                            Record your most recent sleep session and assess your sleep quality.
                         </p>
                     </div>
 
@@ -208,7 +207,7 @@ export default function DashboardAssessment() {
                             type="string"
                             disabled={true}
                             value={sleepDuration.toFixed(2)}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 bg-gray-300"
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 bg-gray-300 cursor-not-allowed"
                         />
                     </div>
 
@@ -248,11 +247,27 @@ export default function DashboardAssessment() {
                         className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
                             assessed
                                 ? "cursor-not-allowed bg-gray-400"
-                                : "bg-indigo-600 hover:bg-indigo-700"
+                                : "bg-indigo-600 hover:bg-indigo-700 curosr-pointer"
                         }`}
                     >
                         Assess Sleep Quality
                     </button>
+                    {assessed && (
+                        <button
+                            type="button"
+                            className={`w-full rounded-lg py-3 font-semibold text-white transition-colors bg-amber-300 hover:bg-amber-400 cursor-pointer`}
+                            onClick={() => {
+                                setBedtime("");
+                                setWakeup("");
+                                setAwakenings(0);
+                                setTimeInBed(0);
+                                setAssessed(false);
+                            }}
+                        >
+                            Track New Sleep
+                        </button>
+                    )}
+                   
 
                 </form>
 
@@ -261,7 +276,6 @@ export default function DashboardAssessment() {
                 ) : (
                     <TrackerCard data={undefined} />
                 )}
-                
             </div>
             <WeeklyTracker data={ historyData } />
         </div>

@@ -38,7 +38,7 @@ export default function TrackerCard( { data } : TrackerCardProp) {
                 bg-gray-50 p-8 text-center
             ">
                 <h3 className="text-lg font-semibold text-gray-800">
-                    No Today's Assesment Yet
+                    No Assesment Yet
                 </h3>
 
                 <p className="mt-2 text-sm text-gray-600">
@@ -76,7 +76,7 @@ export default function TrackerCard( { data } : TrackerCardProp) {
 
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800">
-                            Today's Assessment Result
+                            Latest Assessment Result
                         </h3>
 
                         <p
