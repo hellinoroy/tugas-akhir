@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from models.tracker import Tracker 
 from datetime import datetime, timedelta, date
-from sqlalchemy import text, func
+from sqlalchemy import select, text, func
 # tidak ada role admin
 
 from security import (
@@ -64,56 +64,40 @@ def get_tracker(
 ):
     user_id = check_token(token)
 
-    if end_date is None:
-        end_date = date.today()
-
-    if start_date is None:
-        start_date = end_date - timedelta(days=29)
-
     offset = (page - 1) * page_size
 
-    total = (end_date - start_date).days + 1
+    query = (
+        select(Tracker)
+        .where(Tracker.user_id == user_id)
+    )
 
-    items = db.execute(
-        text("""
-            SELECT
-                COALESCE(
-                    t.created_at,
-                    gs.day::timestamp with time zone
-                ) AS created_at,
-                t.id,
-                t.user_id,
-                t.wakeup,
-                t.bedtime,
-                t."sleepDuration" AS "sleepDuration",
-                t."sleepEfficiency" AS "sleepEfficiency",
-                t.awakenings,
-                t."timeInBed" AS "timeInBed",
-                t."isGoodSleep" AS "isGoodSleep",
-                t.updated_at
-            FROM generate_series(
-                CAST(:start_date AS DATE),
-                CAST(:end_date AS DATE),
-                interval '1 day'
-            ) AS gs(day)
-            LEFT JOIN trackers t
-                ON t.user_id = :user_id
-            AND DATE(t.created_at) = gs.day
-            ORDER BY gs.day DESC
-            LIMIT :limit
-            OFFSET :offset;
-        """),
-        {
-            "user_id": user_id,
-            "start_date": start_date,
-            "end_date": end_date,
-            "limit": page_size,
-            "offset": offset,
-        },
-    ).mappings().all()
+    if start_date is not None:
+        query = query.where(
+            func.date(Tracker.created_at) >= start_date
+        )
+
+    if end_date is not None:
+        query = query.where(
+            func.date(Tracker.created_at) <= end_date
+        )
+
+    total = db.scalar(
+        select(func.count())
+        .select_from(query.subquery())
+    )
+
+    items = (
+        db.scalars(
+            query
+            .order_by(Tracker.created_at.desc())
+            .offset(offset)
+            .limit(page_size)
+        )
+        .all()
+    )
 
     return {
-        "items": [dict(row) for row in items],
+        "items": items,
         "total": total,
         "page": page,
         "page_size": page_size,

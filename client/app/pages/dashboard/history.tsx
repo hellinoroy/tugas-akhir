@@ -1,3 +1,4 @@
+// BENERIN MODAL
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useContext, useEffect, useState } from "react";
@@ -11,6 +12,7 @@ export default function TrackerHistory() {
     const { age } = useContext(UserContext)!;
     const [loading, setLoading] = useState(true);
 
+    // buat form modal
     const [createdAt, setCreatedAt] = useState("");
     const [bedtime, setBedtime] = useState("");
     const [wakeup, setWakeup] = useState("");
@@ -58,10 +60,16 @@ export default function TrackerHistory() {
             sleepEfficiency >= 0.875);
 
     const [data, setData] = useState<Tracker[]>([]);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [maxDate, setMaxDate] = useState("");
+
+    const today = new Date();
+    const tenDaysAgo = new Date(today);
+    tenDaysAgo.setDate(today.getDate() - 10);
+
+    const [startDate, setStartDate] = useState(tenDaysAgo.toISOString().split("T")[0]);
+    const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
+    const maxDate = today.toISOString().split("T")[0];
     const [total, setTotal] = useState(0);
+
 
     const [modal, setModal] = useState<{
         type: "add" | "edit" | "delete" | null;
@@ -76,11 +84,9 @@ export default function TrackerHistory() {
         pageSize: 10,
     });
 
-
-
     const columns = [
         columnHelper.accessor("created_at", {
-            header: "Date",
+            header: "Created At",
             cell: (info) => {
                 const value = info.getValue();
 
@@ -96,10 +102,22 @@ export default function TrackerHistory() {
             header: "Bedtime",
             cell: (info) => {
                 const value = info.getValue();
+                if (!value) {
+                    return (
+                        <span className="text-gray-400">
+                            No Record
+                        </span>
+                    );
+                }
 
-                return value ?? (
-                    <span className="text-gray-400">No Record</span>
-                );
+                return new Date(value).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                })
             },
         }),
 
@@ -108,9 +126,22 @@ export default function TrackerHistory() {
             cell: (info) => {
                 const value = info.getValue();
 
-                return value ?? (
-                    <span className="text-gray-400">No Record</span>
-                );
+                if (!value) {
+                    return (
+                        <span className="text-gray-400">
+                            No Record
+                        </span>
+                    );
+                }
+
+                return new Date(value).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                })
             },
         }),
 
@@ -123,9 +154,9 @@ export default function TrackerHistory() {
                     return <span className="text-gray-400">No Record</span>;
                 }
 
-                return `${Math.floor(value)} hours ${Math.round(
+                return `${Math.floor(value)} h ${Math.round(
                     (value % 1) * 60
-                )} minutes`;
+                )} m`; 
             },
         }),
 
@@ -210,7 +241,7 @@ export default function TrackerHistory() {
             cell: ({ row }) => {
                 const tracker = row.original;
 
-                return tracker.id ? (
+                return (
                     <div className="flex gap-2">
                         <button
                             onClick={() => handleEdit(tracker.id!)}
@@ -226,23 +257,14 @@ export default function TrackerHistory() {
                             Delete
                         </button>
                     </div>
-                ) : (
-                    <button
-                        onClick={() => handleAdd(tracker)}
-                        className="rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
-                    >
-                        Add
-                    </button>
-                );
+                )
             },
         }),
     ];
 
-    const handleAdd = (tracker: Tracker) => {
-        setCreatedAt(tracker.created_at!);
+    const handleAdd = () => {
         setModal({
-            type: "add",
-            tracker,
+            type: "add"
         });
     };
 
@@ -296,27 +318,15 @@ export default function TrackerHistory() {
                 end_date: endDate || undefined,
             },
         });
-
+        console.log(res.data);
         setData(res.data.items);
         setTotal(res.data.total);
     };
 
     useEffect(() => {
         fetchTrackers();
-    }, [pagination, startDate, endDate]);
-
-
-    useEffect(() => {
-        const today = new Date();
-        const tenDaysAgo = new Date(today);
-
-        tenDaysAgo.setDate(today.getDate() - 10);
-
-        setStartDate(tenDaysAgo.toISOString().split("T")[0]);
-        setEndDate(today.toISOString().split("T")[0]);
-        setMaxDate(today.toISOString().split("T")[0]);
         setLoading(false);
-    }, []);
+    }, [pagination, startDate, endDate]);
 
     const handleAddSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
@@ -325,16 +335,16 @@ export default function TrackerHistory() {
             return;
         }
 
-        const payload = {
-            wakeup,
-            bedtime,
-            sleepDuration,
-            sleepEfficiency,
-            awakenings,
-            timeInBed,
-            isGoodSleep,
-            created_at: createdAt
-        };
+        // const payload = {
+        //     wakeup,
+        //     bedtime,
+        //     sleepDuration,
+        //     sleepEfficiency,
+        //     awakenings,
+        //     timeInBed,
+        //     isGoodSleep,
+        //     created_at: createdAt
+        // };
 
         try {
             await api.post("/sleep/tracker", payload);
@@ -345,7 +355,6 @@ export default function TrackerHistory() {
             console.error(err);
         }
     };
-
 
     const handleEditSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
@@ -378,7 +387,6 @@ export default function TrackerHistory() {
         }
     };
 
-
     const handleDeleteSubmit = async () => {
         if (!modal.tracker?.id) return;
 
@@ -403,8 +411,8 @@ export default function TrackerHistory() {
 
 
     return(
-        <>
-            <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div className="m-10">
+            <div className="overflow-x-scroll rounded-lg bg-white p-4">
 
                 <div className="mb-4 flex items-end gap-4">
                     <div>
@@ -448,10 +456,18 @@ export default function TrackerHistory() {
                             setStartDate("");
                             setEndDate("");
                         }}
-                        className="rounded border px-4 py-2"
+                        className="rounded border px-4 py-2 cursor-pointer hover:bg-stone-100"
                     >
                         Clear
                     </button>
+
+                    <button
+                        onClick={() => handleAdd()}
+                        className="rounded bg-green-600 px-4 border py-2 text-white hover:bg-green-700 cursor-pointer"
+                    >
+                        Add New History
+                    </button>
+                
                 </div>
 
 
@@ -538,151 +554,150 @@ export default function TrackerHistory() {
 
             {modal.type && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                     onClick={closeModal}
                 >
                     <div
-                        className="w-full max-w-md rounded-2xl bg-white shadow-xl"
+                        className="w-full max-w-lg rounded-2xl bg-white border border-gray-100 p-8 flex flex-col gap-6"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Header */}
-
-                        <div className="flex items-center justify-between border-b px-6 py-4">
+                        <div className="flex items-center justify-between">
                             <h2 className="text-xl font-semibold">
-                                {modal.type === "add" && "Add Sleep Tracker"}
+                                {modal.type === "add" && "Add New Tracker"}
                                 {modal.type === "edit" && "Edit Sleep Tracker"}
                                 {modal.type === "delete" && "Delete Sleep Tracker"}
                             </h2>
 
                             <button
                                 onClick={closeModal}
-                                className="text-xl text-gray-500 hover:text-gray-700"
+                                className="text-xl text-gray-500 hover:text-gray-700 cursor-pointer"
                             >
                                 ×
                             </button>
                         </div>
 
-                        {/* Body */}
+                        <hr className="border-gray-100" />
 
-                        <div className="p-6">
-                            {modal.type === "delete" ? (
-                                <>
-                                    <p className="text-gray-600">
-                                        Are you sure you want to delete this tracker?
-                                    </p>
+                       
+                        {modal.type === "delete" ? (
+                            <>
+                                <p className="text-gray-600">
+                                    Are you sure you want to delete this tracker?
+                                </p>
 
-                                    <div className="mt-6 flex justify-end gap-3">
-                                        <button
-                                            onClick={closeModal}
-                                            className="rounded border px-4 py-2"
-                                        >
-                                            Cancel
-                                        </button>
+                                <div className="mt-6 flex justify-end gap-3">
+                                    <button
+                                        onClick={closeModal}
+                                        className="rounded border px-4 py-2 cursor-pointer hover:bg-stone-100"
+                                    >
+                                        Cancel
+                                    </button>
 
-                                        <button
-                                            onClick={() => {
-                                                handleDeleteSubmit();
-                                            }}
-                                            className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <form
-                                    onSubmit={
-                                        modal.type === "add"
-                                            ? handleAddSubmit
-                                            : handleEditSubmit
-                                    }
-                                >
-                                    <div className="flex gap-5">
+                                    <button
+                                        onClick={() => {
+                                            handleDeleteSubmit();
+                                        }}
+                                        className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 cursor-pointer"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <form
+                                className="flex flex-col gap-6"
+                                onSubmit={
+                                    modal.type === "add"
+                                        ? handleAddSubmit
+                                        : handleEditSubmit
+                                }
+                            >
+                                <div className="flex gap-5">
 
-                                        <div className="flex-1">
-                                            <label className="mb-2 block text-sm font-medium">
-                                                Bedtime
-                                            </label>
-
-                                            <input
-                                                type="time"
-                                                value={bedtime}
-                                                onChange={(e) => setBedtime(e.target.value)}
-                                                className="w-full rounded-lg border p-2.5"
-                                            />
-                                        </div>
-
-                                        <div className="flex-1">
-                                            <label className="mb-2 block text-sm font-medium">
-                                                Wake-up Time
-                                            </label>
-
-                                            <input
-                                                type="time"
-                                                value={wakeup}
-                                                onChange={(e) => setWakeup(e.target.value)}
-                                                className="w-full rounded-lg border p-2.5"
-                                            />
-                                        </div>
-
-                                    </div>
-
-                                    <div>
+                                    <div className="flex flex-col flex-1 gap-2">
                                         <label className="mb-2 block text-sm font-medium">
-                                            Awakenings
+                                            Bedtime
                                         </label>
 
                                         <input
-                                            type="number"
-                                            value={awakenings}
-                                            onChange={(e) => setAwakenings(Number(e.target.value))}
-                                            className="w-full rounded-lg border p-2.5"
+                                            type="datetime-local"
+                                            onChange={(e) => setBedtime(e.target.value)}
+                                            value={bedtime}
+                                            className="w-full rounded-lg border border-gray-300 px-2 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                                         />
                                     </div>
 
-                                    <div>
+                                    <div className="flex flex-col flex-1 gap-2">
                                         <label className="mb-2 block text-sm font-medium">
-                                            Time in Bed (hours)
+                                            Wake-up Time
                                         </label>
 
                                         <input
-                                            type="number"
-                                            value={timeInBed}
-                                            step={0.5}
-                                            onChange={(e) => setTimeInBed(Number(e.target.value))}
-                                            className="w-full rounded-lg border p-2.5"
+                                            type="datetime-local"
+                                            onChange={(e) => setWakeup(e.target.value)}
+                                            value={wakeup}
+                                            className="w-full rounded-lg border border-gray-300 px-2 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                                         />
                                     </div>
 
-                                    <div className="flex justify-end gap-3 pt-2">
-                                        <button
-                                            type="button"
-                                            onClick={closeModal}
-                                            className="rounded border px-4 py-2"
-                                        >
-                                            Cancel
-                                        </button>
+                                </div>
 
-                                        <button
-                                            type="submit"
-                                            className={`rounded px-4 py-2 text-white ${
-                                                modal.type === "add"
-                                                    ? "bg-green-600 hover:bg-green-700"
-                                                    : "bg-indigo-600 hover:bg-indigo-700"
-                                            }`}
-                                        >
-                                            {modal.type === "add"
-                                                ? "Add Tracker"
-                                                : "Save Changes"}
-                                        </button>
-                                    </div>
-                                </form>
-                            )}
-                        </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="mb-2 block text-sm font-medium">
+                                        Awakenings
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        value={awakenings}
+                                        onChange={(e) => setAwakenings(Number(e.target.value))}
+                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label className="mb-2 block text-sm font-medium">
+                                        Time in Bed (hours)
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        value={timeInBed}
+                                        step={0.5}
+                                        onChange={(e) => setTimeInBed(Number(e.target.value))}
+                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                                    />
+                                </div>
+
+                                <div className="flex justify-end gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        className="rounded border px-4 py-2 cursor-pointer hover:bg-stone-100"
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        className={`rounded px-4 py-2 text-white cursor-pointer ${
+                                            modal.type === "add"
+                                                ? "bg-green-600 hover:bg-green-700"
+                                                : "bg-yellow-600 hover:bg-yellow-700"
+                                        }`}
+                                    >
+                                        {modal.type === "add"
+                                            ? "Add Tracker"
+                                            : "Save Changes"}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                        
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 
 }

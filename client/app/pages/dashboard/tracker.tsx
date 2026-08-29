@@ -151,7 +151,7 @@ export default function DashboardAssessment() {
         <div className="flex flex-col items-center overflow-scroll @container">
             <div className="flex flex-col @5xl:flex-row h-full justify-center items-center gap-10 my-20">
                 <form 
-                    className="w-full max-w-lg  flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl space-y-6"
+                    className="w-full max-w-lg flex flex-col rounded-2xl border border-gray-100 bg-white p-8 shadow-xl gap-6"
                     onSubmit={handleSubmit}
                 >
                     <div>
@@ -168,7 +168,7 @@ export default function DashboardAssessment() {
 
                     <div className="flex flex-col gap-5">
                         <div className="flex flex-row gap-5">
-                            <div className="flex flex-col flex-1 space-y-2">
+                            <div className="flex flex-col flex-1 gap-2">
                                 <label className="text-sm font-semibold text-gray-700">
                                     Bedtime
                                 </label>
@@ -182,7 +182,7 @@ export default function DashboardAssessment() {
                                 />
                             </div>
 
-                            <div className="flex flex-col flex-1 space-y-2">
+                            <div className="flex flex-col flex-1 gap-2">
                                 <label className="text-sm font-semibold text-gray-700">
                                     Wake-up Time
                                 </label>
@@ -198,7 +198,7 @@ export default function DashboardAssessment() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-2">
                         <label className="text-sm font-semibold text-gray-700">
                             Sleep Duration (hours)
                         </label>
@@ -211,7 +211,7 @@ export default function DashboardAssessment() {
                         />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-2">
                         <label className="text-sm font-semibold text-gray-700">
                             Number of Awakenings
                         </label>
@@ -225,7 +225,7 @@ export default function DashboardAssessment() {
                         />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="flex flex-col gap-2">
                         <label className="text-sm font-semibold text-gray-700">
                             Total Time in Bed (hours)
                         </label>
@@ -255,7 +255,7 @@ export default function DashboardAssessment() {
                     {assessed && (
                         <button
                             type="button"
-                            className={`w-full rounded-lg py-3 font-semibold text-white transition-colors bg-amber-300 hover:bg-amber-400 cursor-pointer`}
+                            className={`w-full rounded-lg py-3 font-semibold text-white transition-colors bg-green-600 hover:bg-green-700 cursor-pointer`}
                             onClick={() => {
                                 setBedtime("");
                                 setWakeup("");
