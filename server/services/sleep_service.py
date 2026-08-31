@@ -15,7 +15,6 @@ def post_tracker(
     token: str    
 ): 
     user_id = check_token(token)
-
     tracker = Tracker(
         user_id=int(user_id),
         wakeup = data.wakeup,
@@ -210,7 +209,7 @@ def post_tracker_test(
         "message": f"Sleep tracked {days_offset} day(s) from now"
     }
 
-def put_tracker_service(
+def put_tracker(
     db: Session,
     token: str,
     id: int,
@@ -230,8 +229,6 @@ def put_tracker_service(
     if not tracker:
         return None
 
-    print(id)
-    print(data)
     tracker.wakeup = data.wakeup
     tracker.bedtime = data.bedtime
     tracker.sleepDuration = data.sleepDuration
@@ -243,7 +240,9 @@ def put_tracker_service(
     db.commit()
     db.refresh(tracker)
 
-    return tracker
+    return {
+        "message": "Sleep tracker updated" 
+    }
 
 def delete_tracker(
     db: Session,
@@ -267,7 +266,10 @@ def delete_tracker(
     db.delete(tracker)
     db.commit()
 
-    return tracker
+    return {
+        "message": "Tracker deleted successfully",
+    }
+
     
 def get_sleep_quality_by_age (
     db: Session,

@@ -18,7 +18,13 @@ export default function DashboardAssessment() {
     const [timeInBed, setTimeInBed]= useState(0);
     const [assessed, setAssessed] = useState(false);
     const [loading, setLoading] = useState(true);
-    
+
+    // UTC
+    const today = new Date()
+    // Local machine
+    const offset = today.getTimezoneOffset() * 60000;
+    const now = new Date(today.getTime() - offset).toISOString().slice(0, 16);
+
     const [historyData, setHistoryData] = useState<TrackerAPI>();
 
     let sleepDuration: number = 0;
@@ -31,13 +37,14 @@ export default function DashboardAssessment() {
 
     }
 
-    const sleepEfficiency =
-    timeInBed > 0
-        ? sleepDuration / timeInBed
-        : 0;
+    let sleepEfficiency: number = 0;
+    if(timeInBed && sleepDuration) {
+        sleepEfficiency = sleepDuration / timeInBed
+    }
 
-    const isGoodSleep =
-        (age >= 18 &&
+    let isGoodSleep: boolean | null = null;
+    if(age && (sleepDuration != 0) && (sleepEfficiency != 0)) {
+        isGoodSleep = (age >= 18 &&
             age < 65 &&
             sleepDuration >= 7 &&
             sleepDuration <= 9 &&
@@ -49,6 +56,7 @@ export default function DashboardAssessment() {
             sleepDuration <= 8 &&
             awakenings <= 2 &&
             sleepEfficiency >= 0.875);
+    }
 
     const trackerData: Tracker = {
         id: null,
@@ -137,10 +145,16 @@ export default function DashboardAssessment() {
             const payload = {
                 wakeup, bedtime, sleepDuration, sleepEfficiency, awakenings, timeInBed, isGoodSleep
             };
+            console.log(payload);
 
-            const response = await api.post("/sleep/tracker", payload);
-            toast.success(response.data.message);
-            setAssessed(true);
+            try {
+                const response = await api.post("/sleep/tracker", payload);
+                toast.success(response.data.message);
+                setAssessed(true);
+            } catch (error) {
+                toast.error('A server error has occured');
+                return;
+            } 
 
         } else {
             toast.error('An error has occured');
@@ -175,6 +189,7 @@ export default function DashboardAssessment() {
 
                                 <input
                                     type="datetime-local"
+                                    max={now}
                                     disabled={assessed}
                                     onChange={(e) => setBedtime(e.target.value)}
                                     value={bedtime}
@@ -189,6 +204,8 @@ export default function DashboardAssessment() {
 
                                 <input
                                     type="datetime-local"
+                                    min={bedtime}
+                                    max={now}
                                     disabled={assessed}
                                     onChange={(e) => setWakeup(e.target.value)}
                                     value={wakeup}
@@ -202,7 +219,7 @@ export default function DashboardAssessment() {
                         <label className="text-sm font-semibold text-gray-700">
                             Sleep Duration (hours)
                         </label>
-
+ 
                         <input
                             type="string"
                             disabled={true}

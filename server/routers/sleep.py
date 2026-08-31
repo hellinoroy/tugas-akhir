@@ -8,7 +8,7 @@ from services.sleep_service import (
     get_weekly_summary_service, 
     post_tracker_test, 
     post_tracker,
-    put_tracker_service,
+    put_tracker,
     delete_tracker,
     get_sleep_quality_by_age,
     get_sleep_quality_by_gender
@@ -72,7 +72,7 @@ def update_tracker(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme),
 ):
-    tracker = put_tracker_service(db, token, id, data)
+    tracker = put_tracker(db, token, id, data)
 
     if not tracker:
         raise HTTPException(
@@ -83,7 +83,7 @@ def update_tracker(
     return tracker
 
 @router.delete("/tracker/{id}")
-def delete_tracker_route(
+def remove_tracker(
     id: int,
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme),
@@ -96,10 +96,7 @@ def delete_tracker_route(
             detail="Tracker not found"
         )
 
-    return {
-        "message": "Tracker deleted successfully",
-        "id": id
-    }
+    return tracker
 
 @router.get("/tracker/get-sleep-qualities-by-age")
 def get_sleep_quality_histogram_by_age(

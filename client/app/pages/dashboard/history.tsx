@@ -4,6 +4,7 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { useContext, useEffect, useState } from "react";
 import { api } from "~/root";
 import { UserContext } from "~/context/user-context";
+import { toast } from "react-toastify";
 
 
 const columnHelper = createColumnHelper<Tracker>();
@@ -18,35 +19,25 @@ export default function TrackerHistory() {
     const [wakeup, setWakeup] = useState("");
     const [awakenings, setAwakenings] = useState(0);
     const [timeInBed, setTimeInBed]= useState(0);
-    // const [sleepDuration, setSleepDuration]= useState(0);
-    // const [sleepEfficiency, setSleepEfficiency] = useState(0);
-    // const [isGoodSleep, setIsGoodSleep] = useState(true);
 
-    
     let sleepDuration: number = 0;
     if(bedtime && wakeup) {
-        const [startHour, startMinute] = bedtime.split(":").map(Number);
-        const [endHour, endMinute] = wakeup.split(":").map(Number);
-        const start = startHour * 60 + startMinute;
-        let end = endHour * 60 + endMinute;
+        const start = new Date(bedtime).getTime();
+        const end = new Date(wakeup).getTime();
+        const diffMs = end - start;
 
-        let diff = end - start;
-        
-        if (diff < 0) {
-            end += 24 * 60;
-            diff = end - start;
-        }
+        sleepDuration = diffMs / (1000 * 60 * 60);
 
-        sleepDuration = (diff / 60);
     }
 
-    const sleepEfficiency =
-    timeInBed > 0
-        ? sleepDuration / timeInBed
-        : 0;
+    let sleepEfficiency: number = 0;
+    if(timeInBed && sleepDuration) {
+        sleepEfficiency = sleepDuration / timeInBed
+    }
 
-    const isGoodSleep =
-        (age >= 18 &&
+    let isGoodSleep: boolean | null = null;
+    if(age && (sleepDuration != 0) && (sleepEfficiency != 0)) {
+        isGoodSleep = (age >= 18 &&
             age < 65 &&
             sleepDuration >= 7 &&
             sleepDuration <= 9 &&
@@ -58,16 +49,21 @@ export default function TrackerHistory() {
             sleepDuration <= 8 &&
             awakenings <= 2 &&
             sleepEfficiency >= 0.875);
+    }
 
     const [data, setData] = useState<Tracker[]>([]);
 
-    const today = new Date();
-    const tenDaysAgo = new Date(today);
-    tenDaysAgo.setDate(today.getDate() - 10);
+    // UTC
+    const today = new Date()
+    // Local machine
+    const offset = today.getTimezoneOffset() * 60000;
+    const now = new Date(today.getTime() - offset);
+    const tenDaysAgo = new Date(now);
+    tenDaysAgo.setDate(now.getDate() - 10);
 
     const [startDate, setStartDate] = useState(tenDaysAgo.toISOString().split("T")[0]);
-    const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
-    const maxDate = today.toISOString().split("T")[0];
+    const [endDate, setEndDate] = useState(now.toISOString().split("T")[0]);
+    const maxDate = now.toISOString().slice(0, 16);
     const [total, setTotal] = useState(0);
 
 
@@ -77,7 +73,6 @@ export default function TrackerHistory() {
     }>({
         type: null,
     });
-
 
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -276,9 +271,6 @@ export default function TrackerHistory() {
         setWakeup(tracker.wakeup!);
         setAwakenings(tracker.awakenings!);
         setTimeInBed(tracker.timeInBed!);
-        // setSleepDuration(tracker.sleepDuration!);
-        // setSleepEfficiency(tracker.sleepEfficiency!);
-        // setIsGoodSleep(tracker.isGoodSleep!);
 
         setModal({
             type: "edit",
@@ -295,7 +287,13 @@ export default function TrackerHistory() {
         });
     };
 
-    const closeModal = () => setModal({ type: null, });
+    const closeModal = () => {
+        setBedtime("");
+        setWakeup("");
+        setTimeInBed(0);
+        setAwakenings(0);
+        setModal({ type: null, })
+    };
 
     const table = useReactTable({
         data,
@@ -331,73 +329,83 @@ export default function TrackerHistory() {
     const handleAddSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
 
-        if (!bedtime || !wakeup || timeInBed < sleepDuration || !createdAt) {
+        if(sleepDuration < 0) {
+            toast.error('Wakeup cannot be less than bedtime');
             return;
         }
 
-        // const payload = {
-        //     wakeup,
-        //     bedtime,
-        //     sleepDuration,
-        //     sleepEfficiency,
-        //     awakenings,
-        //     timeInBed,
-        //     isGoodSleep,
-        //     created_at: createdAt
-        // };
-
-        try {
-            await api.post("/sleep/tracker", payload);
-
-            closeModal();
-            fetchTrackers();
-        } catch (err) {
-            console.error(err);
+        if(timeInBed <= sleepDuration) {
+            toast.error('Total time in bed cannot be less than sleep duration');
+            return;
         }
+
+        if (bedtime && wakeup) {
+            const payload = {
+                wakeup, bedtime, sleepDuration, sleepEfficiency, awakenings, timeInBed, isGoodSleep
+            };
+            try {
+                const response = await api.post("/sleep/tracker", payload);
+                toast.success(response.data.message);
+                closeModal();
+                fetchTrackers();
+            } catch (error) {
+                toast.error('A server error has occured');
+            }
+        } else {
+            toast.error('An error has occured');
+        }
+
     };
 
     const handleEditSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
 
-        if (!modal.tracker?.id) return;
-
-        if (!bedtime || !wakeup || timeInBed < sleepDuration) {
-            return;
-        }
-        console.log(sleepDuration, sleepEfficiency, isGoodSleep);
-
-        const payload = {
-            wakeup,
-            bedtime,
-            sleepDuration,
-            sleepEfficiency,
-            awakenings,
-            timeInBed,
-            isGoodSleep,
+        if (!modal.tracker?.id) {
+            toast.error('An error has occured');
+            return
         };
 
-        try {
-            await api.put(`/sleep/tracker/${modal.tracker.id}`, payload);
-
-            closeModal();
-
-            fetchTrackers();
-        } catch (err) {
-            console.error(err);
+        if(sleepDuration < 0) {
+            toast.error('Wakeup cannot be less than bedtime');
+            return;
         }
+
+        if(timeInBed <= sleepDuration) {
+            toast.error('Total time in bed cannot be less than sleep duration');
+            return;
+        }
+
+        if (bedtime && wakeup) {
+            const payload = {
+                wakeup, bedtime, sleepDuration, sleepEfficiency, awakenings, timeInBed, isGoodSleep
+            };
+            try {
+                const response = await api.put(`/sleep/tracker/${modal.tracker.id}`, payload);
+                toast.success(response.data.message);
+                closeModal();
+                fetchTrackers();
+            } catch (error) {
+                toast.error('A server error has occured');
+            }
+        } else {
+            toast.error('An error has occured');
+        }
+
     };
 
     const handleDeleteSubmit = async () => {
-        if (!modal.tracker?.id) return;
+        if (!modal.tracker?.id) {
+            toast.error('An error has occured');
+            return
+        };
 
         try {
-            await api.delete(`/sleep/tracker/${modal.tracker.id}`);
-
+            const response = await api.delete(`/sleep/tracker/${modal.tracker.id}`);
+            toast.success(response.data.message);
             closeModal();
-
             fetchTrackers();
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            toast.error('A server error has occured');
         }
     };
 
@@ -440,7 +448,7 @@ export default function TrackerHistory() {
                         <input
                             type="date"
                             min={startDate}
-                            max={maxDate}
+                            max={maxDate.split("T")[0]}
                             value={endDate}
                             onChange={(e) => {
                                 setPagination(p => ({ ...p, pageIndex: 0 }));
@@ -585,7 +593,7 @@ export default function TrackerHistory() {
                                     Are you sure you want to delete this tracker?
                                 </p>
 
-                                <div className="mt-6 flex justify-end gap-3">
+                                <div className="flex justify-end gap-3">
                                     <button
                                         onClick={closeModal}
                                         className="rounded border px-4 py-2 cursor-pointer hover:bg-stone-100"
@@ -621,6 +629,7 @@ export default function TrackerHistory() {
 
                                         <input
                                             type="datetime-local"
+                                            max={maxDate}
                                             onChange={(e) => setBedtime(e.target.value)}
                                             value={bedtime}
                                             className="w-full rounded-lg border border-gray-300 px-2 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
@@ -634,12 +643,27 @@ export default function TrackerHistory() {
 
                                         <input
                                             type="datetime-local"
+                                            min={bedtime}
+                                            max={maxDate}
                                             onChange={(e) => setWakeup(e.target.value)}
                                             value={wakeup}
                                             className="w-full rounded-lg border border-gray-300 px-2 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                                         />
                                     </div>
 
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-semibold text-gray-700">
+                                        Sleep Duration (hours)
+                                    </label>
+            
+                                    <input
+                                        type="string"
+                                        disabled={true}
+                                        value={sleepDuration.toFixed(2)}
+                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 bg-gray-300 cursor-not-allowed"
+                                    />
                                 </div>
 
                                 <div className="flex flex-col gap-2">
