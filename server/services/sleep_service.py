@@ -9,30 +9,6 @@ from security import (
     check_token
 )
 
-def post_tracker(
-    data: TrackerRequest,
-    db: Session,
-    token: str    
-): 
-    user_id = check_token(token)
-    tracker = Tracker(
-        user_id=int(user_id),
-        wakeup = data.wakeup,
-        bedtime = data.bedtime,
-        sleepDuration = data.sleepDuration,
-        sleepEfficiency = data.sleepEfficiency,
-        awakenings = data.awakenings,
-        timeInBed = data.timeInBed,
-        isGoodSleep = data.isGoodSleep,
-        created_at = data.created_at
-    )
-
-    db.add(tracker)
-    db.commit()
-    return {
-        "message": "Daily sleep tracked"
-    }
-
 def get_today_tracker(
     db: Session,
     token: str        
@@ -72,12 +48,12 @@ def get_tracker(
 
     if start_date is not None:
         query = query.where(
-            func.date(Tracker.created_at) >= start_date
+            func.date(Tracker.bedtime) >= start_date
         )
 
     if end_date is not None:
         query = query.where(
-            func.date(Tracker.created_at) <= end_date
+            func.date(Tracker.bedtime) <= end_date
         )
 
     total = db.scalar(
@@ -88,7 +64,7 @@ def get_tracker(
     items = (
         db.scalars(
             query
-            .order_by(Tracker.created_at.desc())
+            .order_by(Tracker.bedtime.desc())
             .offset(offset)
             .limit(page_size)
         )
@@ -182,6 +158,111 @@ def get_weekly_summary_service(
         ],
     }
 
+def get_sleep_quality_by_age (
+    db: Session,
+): 
+    items = db.execute(
+        text("""
+            WITH latest_trackers AS (
+                SELECT DISTINCT ON (user_id)
+                    user_id,
+                    "isGoodSleep",
+                    created_at
+                FROM trackers
+                ORDER BY user_id, created_at DESC
+            ),
+            user_ages AS (
+                SELECT
+                    id,
+                    EXTRACT(YEAR FROM AGE(dob))::int AS age
+                FROM users
+            )
+            SELECT
+                ua.age,
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = true
+                ) AS "goodSleep",
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = false
+                ) AS "badSleep"
+
+            FROM latest_trackers lt
+            JOIN user_ages ua
+                ON ua.id = lt.user_id
+
+            GROUP BY ua.age
+            ORDER BY ua.age;
+        """)
+    ).mappings().all()
+ 
+    return {
+        "data": items,
+    }
+
+def get_sleep_quality_by_gender (
+    db: Session,
+): 
+    items = db.execute(
+        text("""
+            WITH latest_trackers AS (
+                SELECT DISTINCT ON (user_id)
+                    user_id,
+                    "isGoodSleep",
+                    created_at
+                FROM trackers
+                ORDER BY user_id, created_at DESC
+            )
+            SELECT
+                u.gender,
+
+                COUNT(*) FILTER (
+                    WHERE lt."isGoodSleep" = true
+                ) AS "goodSleep",
+
+                COUNT(*) FILTER (   
+                    WHERE lt."isGoodSleep" = false
+                ) AS "badSleep"
+
+            FROM latest_trackers lt
+            JOIN users u
+                ON u.id = lt.user_id
+
+            GROUP BY u.gender
+            ORDER BY u.gender;
+        """)
+    ).mappings().all()
+
+
+    return {
+        "data": items,
+    }
+
+def post_tracker(
+    data: TrackerRequest,
+    db: Session,
+    token: str    
+): 
+    user_id = check_token(token)
+    tracker = Tracker(
+        user_id=int(user_id),
+        wakeup = data.wakeup,
+        bedtime = data.bedtime,
+        sleepDuration = data.sleepDuration,
+        sleepEfficiency = data.sleepEfficiency,
+        awakenings = data.awakenings,
+        timeInBed = data.timeInBed,
+        isGoodSleep = data.isGoodSleep,
+        created_at = data.created_at
+    )
+
+    db.add(tracker)
+    db.commit()
+    return {
+        "message": "Daily sleep tracked"
+    }
+
 def post_tracker_test(
     data: TrackerRequest,
     db: Session,
@@ -269,86 +350,3 @@ def delete_tracker(
     return {
         "message": "Tracker deleted successfully",
     }
-
-    
-def get_sleep_quality_by_age (
-    db: Session,
-): 
-    items = db.execute(
-        text("""
-            WITH latest_trackers AS (
-                SELECT DISTINCT ON (user_id)
-                    user_id,
-                    "isGoodSleep",
-                    created_at
-                FROM trackers
-                ORDER BY user_id, created_at DESC
-            ),
-            user_ages AS (
-                SELECT
-                    id,
-                    EXTRACT(YEAR FROM AGE(dob))::int AS age
-                FROM users
-            )
-            SELECT
-                ua.age,
-
-                COUNT(*) FILTER (
-                    WHERE lt."isGoodSleep" = true
-                ) AS "goodSleep",
-
-                COUNT(*) FILTER (
-                    WHERE lt."isGoodSleep" = false
-                ) AS "badSleep"
-
-            FROM latest_trackers lt
-            JOIN user_ages ua
-                ON ua.id = lt.user_id
-
-            GROUP BY ua.age
-            ORDER BY ua.age;
-        """)
-    ).mappings().all()
- 
-    return {
-        "data": items,
-    }
-
-def get_sleep_quality_by_gender (
-    db: Session,
-): 
-    items = db.execute(
-        text("""
-            WITH latest_trackers AS (
-                SELECT DISTINCT ON (user_id)
-                    user_id,
-                    "isGoodSleep",
-                    created_at
-                FROM trackers
-                ORDER BY user_id, created_at DESC
-            )
-            SELECT
-                u.gender,
-
-                COUNT(*) FILTER (
-                    WHERE lt."isGoodSleep" = true
-                ) AS "goodSleep",
-
-                COUNT(*) FILTER (   
-                    WHERE lt."isGoodSleep" = false
-                ) AS "badSleep"
-
-            FROM latest_trackers lt
-            JOIN users u
-                ON u.id = lt.user_id
-
-            GROUP BY u.gender
-            ORDER BY u.gender;
-        """)
-    ).mappings().all()
-
-
-    return {
-        "data": items,
-    }
-

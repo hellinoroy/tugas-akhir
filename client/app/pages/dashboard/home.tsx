@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { api } from "~/root";
 
 import TrackerCard from "~/components/dashboard/home/tracker-card";
-import WeeklyTracker from "~/components/dashboard/home/weekly-tracker";
+import LatestTracker from "~/components/dashboard/home/latest-tracker";
 import SleepImprovementRecommendations from "~/components/dashboard/home/recommendation";
 
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
@@ -56,7 +56,7 @@ export default function DashboardHome() {
                 <WeeklySummary data={ historyData } />
             </div>
             <SleepImprovementRecommendations data={ historyData } /> 
-            <WeeklyTracker data={ historyData } />
+            <LatestTracker data={ historyData } />
             <Histogram />
         
         </div>

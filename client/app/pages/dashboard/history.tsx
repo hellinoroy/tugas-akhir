@@ -14,7 +14,6 @@ export default function TrackerHistory() {
     const [loading, setLoading] = useState(true);
 
     // buat form modal
-    const [createdAt, setCreatedAt] = useState("");
     const [bedtime, setBedtime] = useState("");
     const [wakeup, setWakeup] = useState("");
     const [awakenings, setAwakenings] = useState(0);
@@ -80,18 +79,6 @@ export default function TrackerHistory() {
     });
 
     const columns = [
-        columnHelper.accessor("created_at", {
-            header: "Created At",
-            cell: (info) => {
-                const value = info.getValue();
-
-                if (!value) {
-                    return <span className="text-gray-400">No Record</span>;
-                }
-
-                return new Date(value).toLocaleDateString();
-            },
-        }),
 
         columnHelper.accessor("bedtime", {
             header: "Bedtime",
@@ -214,6 +201,19 @@ export default function TrackerHistory() {
                         Poor
                     </span>
                 );
+            },
+        }),
+
+        columnHelper.accessor("created_at", {
+            header: "Created At",
+            cell: (info) => {
+                const value = info.getValue();
+
+                if (!value) {
+                    return <span className="text-gray-400">No Record</span>;
+                }
+
+                return new Date(value).toLocaleDateString();
             },
         }),
 

@@ -64,7 +64,6 @@ def track_test(
 ):
     return post_tracker_test(data, db, token, days_offset)
 
-
 @router.put("/tracker/{id}", status_code=status.HTTP_200_OK)
 def update_tracker(
     id: int,
