@@ -86,7 +86,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
                 if (!value) {
                     return (
-                        <span className="text-gray-400">
+                        <span className="text-gray-500">
                             No Record
                         </span>
                     );
@@ -110,7 +110,7 @@ export default function TrackerHistory() {
 
                 if (!value) {
                     return (
-                        <span className="text-gray-400">
+                        <span className="text-gray-500">
                             No Record
                         </span>
                     );
@@ -133,7 +133,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
 
                 if (value == null) {
-                    return <span className="text-gray-400">No Record</span>;
+                    return <span className="text-gray-500">No Record</span>;
                 }
 
                 return `${Math.floor(value)} h ${Math.round(
@@ -148,7 +148,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
 
                 if (value == null) {
-                    return <span className="text-gray-400">No Record</span>;
+                    return <span className="text-gray-500">No Record</span>;
                 }
 
                 return `${(value * 100).toFixed(2)}%`;
@@ -161,7 +161,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
 
                 return value ?? (
-                    <span className="text-gray-400">No Record</span>
+                    <span className="text-gray-500">No Record</span>
                 );
             },
         }),
@@ -172,7 +172,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
 
                 if (value == null) {
-                    return <span className="text-gray-400">No Record</span>;
+                    return <span className="text-gray-500">No Record</span>;
                 }
 
                 return `${value} h`;
@@ -210,7 +210,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
 
                 if (!value) {
-                    return <span className="text-gray-400">No Record</span>;
+                    return <span className="text-gray-500">No Record</span>;
                 }
 
                 return new Date(value).toLocaleDateString();
@@ -223,7 +223,7 @@ export default function TrackerHistory() {
                 const value = info.getValue();
 
                 if (!value) {
-                    return <span className="text-gray-400">No Record</span>;
+                    return <span className="text-gray-500">No Record</span>;
                 }
 
                 return new Date(value).toLocaleDateString();
@@ -316,7 +316,6 @@ export default function TrackerHistory() {
                 end_date: endDate || undefined,
             },
         });
-        console.log(res.data);
         setData(res.data.items);
         setTotal(res.data.total);
     };
@@ -486,7 +485,7 @@ export default function TrackerHistory() {
                                 {headerGroup.headers.map((header) => (
                                     <th
                                         key={header.id}
-                                        className="px-4 py-3 text-left text-sm font-semibold text-gray-700"
+                                        className="px-4 py-3 text-left text-sm font-semibold text-gray-800"
                                     >
                                         {header.isPlaceholder
                                             ? null
@@ -510,7 +509,7 @@ export default function TrackerHistory() {
                                     {row.getVisibleCells().map((cell) => (
                                         <td
                                             key={cell.id}
-                                            className="px-4 py-3 text-sm text-gray-700"
+                                            className="px-4 py-3 text-sm text-gray-800"
                                         >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
@@ -535,7 +534,7 @@ export default function TrackerHistory() {
             </div>
 
             <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-500">
                     Page {table.getState().pagination.pageIndex + 1} of{" "}
                     {table.getPageCount()}
                 </span>
@@ -578,7 +577,7 @@ export default function TrackerHistory() {
 
                             <button
                                 onClick={closeModal}
-                                className="text-xl text-gray-500 hover:text-gray-700 cursor-pointer"
+                                className="text-xl text-gray-500 hover:text-gray-800 cursor-pointer"
                             >
                                 ×
                             </button>
@@ -589,7 +588,7 @@ export default function TrackerHistory() {
                        
                         {modal.type === "delete" ? (
                             <>
-                                <p className="text-gray-600">
+                                <p className="text-gray-500">
                                     Are you sure you want to delete this tracker?
                                 </p>
 
@@ -654,7 +653,7 @@ export default function TrackerHistory() {
                                 </div>
 
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-semibold text-gray-700">
+                                    <label className="text-sm font-semibold text-gray-800">
                                         Sleep Duration (hours)
                                     </label>
             

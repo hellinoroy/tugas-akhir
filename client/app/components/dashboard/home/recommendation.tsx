@@ -127,7 +127,7 @@ export default function SleepImprovementRecommendations( { data }: TrackerAPIPro
 
                     if (!hasData) {
                         priority = "No Data";
-                        priorityClass = "text-gray-400";
+                        priorityClass = "text-gray-500";
 
                         recommendation =
                             `There is not enough sleep data to assess your ${item.name.toLowerCase()}.`;
@@ -174,7 +174,7 @@ export default function SleepImprovementRecommendations( { data }: TrackerAPIPro
                                         {item.name}
                                     </p>
 
-                                    <p className="mt-0.5 text-xs text-gray-400">
+                                    <p className="mt-0.5 text-xs text-gray-500">
                                         {hasData
                                             ? `${item.failures} of ${total} assessments`
                                             : "No assessments available"}
@@ -182,7 +182,7 @@ export default function SleepImprovementRecommendations( { data }: TrackerAPIPro
                                 </div>
 
                                 <div className="text-right">
-                                    <p className="text-sm font-bold text-gray-700">
+                                    <p className="text-sm font-bold text-gray-800">
                                         {hasData ? `${percentage.toFixed(0)}%` : "—"}
                                     </p>
 
@@ -206,7 +206,7 @@ export default function SleepImprovementRecommendations( { data }: TrackerAPIPro
                             </div>
 
                             <div className="mt-4 rounded-lg bg-gray-50 px-4 py-3 text-justify">
-                                <p className="text-sm leading-relaxed text-gray-600">
+                                <p className="text-sm leading-relaxed text-gray-500">
                                     {recommendation}
                                 </p>
                             </div>

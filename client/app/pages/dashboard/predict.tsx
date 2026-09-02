@@ -80,37 +80,37 @@ export default function DashboardPrediction() {
                     <hr className="border-gray-100" />
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Caffeine Consumption
                         </label>
                         <input 
                             onChange={(e) => setCaffeine(parseInt(e.target.value))}
                             value={caffeine}
                             type="number" 
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                         />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Alcohol Consumption
                         </label>
                         <input 
                             onChange={(e) => setAlcohol(parseInt(e.target.value))}
                             value={alcohol}
                             type="number" 
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                         />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Smoking Habits
                         </label>
                         <select
                             onChange={(e) => setSmoking(parseInt(e.target.value))}
                             value={smoking}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                         >
                             <option value="">Select an option</option>
                             <option value="1">Yes</option>
@@ -119,14 +119,14 @@ export default function DashboardPrediction() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Exercise Frequency
                         </label>
                         <input 
                             onChange={(e) => setExercise(parseInt(e.target.value))}
                             value={exercise}
                             type="number" 
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                         />
                     </div>
 
@@ -162,7 +162,7 @@ export default function DashboardPrediction() {
 
                             {status == "none" ? (
                                 <div>
-                                    <p className="mb-4 text-sm text-gray-600">
+                                    <p className="mb-4 text-sm text-gray-500">
                                         Help us Improve ! Is this prediction accurate ?
                                     </p>
 
@@ -171,10 +171,10 @@ export default function DashboardPrediction() {
                                             Good Sleep Quality Criteria
                                         </p>
 
-                                        <div className="mt-3 space-y-4 text-sm text-gray-600">
+                                        <div className="mt-3 space-y-4 text-sm text-gray-500">
 
                                             <div>
-                                                <p className="font-medium text-gray-700">
+                                                <p className="font-medium text-gray-800">
                                                     Adults (18–64 years)
                                                 </p>
 
@@ -186,7 +186,7 @@ export default function DashboardPrediction() {
                                             </div>
 
                                             <div>
-                                                <p className="font-medium text-gray-700">
+                                                <p className="font-medium text-gray-800">
                                                     Older Adults (65+ years)
                                                 </p>
 
@@ -240,7 +240,7 @@ export default function DashboardPrediction() {
                             No Prediction Yet
                         </h3>
 
-                        <p className="mt-2 text-sm text-gray-600">
+                        <p className="mt-2 text-sm text-gray-500">
                             Complete the form on the left, then click <strong>Submit</strong> to
                             generate your sleep quality prediction.
                         </p>

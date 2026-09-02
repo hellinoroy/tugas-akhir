@@ -41,7 +41,7 @@ export default function TrackerCard( { data } : TrackerCardProp) {
                     No Assesment Yet
                 </h3>
 
-                <p className="mt-2 text-sm text-gray-600">
+                <p className="mt-2 text-sm text-gray-500">
                     Complete the form Sleep Tracker Page, then click <strong>Submit</strong> to
                     generate your sleep quality assessment.
                 </p>
@@ -89,7 +89,7 @@ export default function TrackerCard( { data } : TrackerCardProp) {
                             {data.isGoodSleep ? "Good Sleep Quality" : "Poor Sleep Quality"}
                         </p>
 
-                        <p className="mt-1 text-sm text-gray-600">
+                        <p className="mt-1 text-sm text-gray-500">
                             {data.isGoodSleep
                                 ? "Your sleep meets the recommended criteria."
                                 : "Your sleep quality needs improvement."}
@@ -102,9 +102,9 @@ export default function TrackerCard( { data } : TrackerCardProp) {
                 Your Sleep Result
             </p>
 
-            <div className="mt-3 text-sm text-gray-600">
+            <div className="mt-3 text-sm text-gray-500">
                 <div>
-                    <p className="font-medium text-gray-700">
+                    <p className="font-medium text-gray-800">
                         Recorded Values
                     </p>
 
@@ -129,10 +129,10 @@ export default function TrackerCard( { data } : TrackerCardProp) {
                 Good Sleep Quality Criteria
             </p>
 
-            <div className="mt-3 space-y-4 text-sm text-gray-600">
+            <div className="mt-3 space-y-4 text-sm text-gray-500">
 
                 <div>
-                    <p className="font-medium text-gray-700">
+                    <p className="font-medium text-gray-800">
                         Adults (18–64 years)
                     </p>
 
@@ -144,7 +144,7 @@ export default function TrackerCard( { data } : TrackerCardProp) {
                 </div>
 
                 <div>
-                    <p className="font-medium text-gray-700">
+                    <p className="font-medium text-gray-800">
                         Older Adults (65+ years)
                     </p>
 

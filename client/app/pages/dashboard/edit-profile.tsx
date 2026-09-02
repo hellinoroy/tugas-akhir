@@ -43,49 +43,49 @@ export default function DashboardSetting() {
                 <hr className="border-gray-100" />
 
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-700">
+                    <label className="text-sm font-semibold text-gray-800">
                         Name
                     </label>
                     <input 
                         onChange={(e) => setName(e.target.value)}
                         value={name}
                         type="text" 
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-700">
+                    <label className="text-sm font-semibold text-gray-800">
                     Email
                     </label>
                     <input 
                         onChange={(e) => setEmail(e.target.value)}
                         value={email}
                         type="email" 
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-700">
+                    <label className="text-sm font-semibold text-gray-800">
                     Date of Birth
                     </label>
                     <input 
                         onChange={(e) => setDob(e.target.value)}
                         value={dob}
                         type="date" 
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-700">
+                    <label className="text-sm font-semibold text-gray-800">
                         Gender
                     </label>
                     <select
                         onChange={(e) => setGender(e.target.value)}
                         value={gender}
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     >
                         <option value="male">Male</option>
                         <option value="female">Female</option>

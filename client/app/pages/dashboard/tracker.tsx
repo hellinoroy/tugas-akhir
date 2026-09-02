@@ -71,6 +71,15 @@ export default function DashboardAssessment() {
         updated_at: null,
     };
 
+    const fetchLatest = async () => {
+        try {
+            const response = await api.get("/sleep/tracker");
+            setHistoryData(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };          
+
     useEffect(() => {
         setLoading(true);
         const fetchToday = async () => {
@@ -93,26 +102,8 @@ export default function DashboardAssessment() {
 
         }
 
-        const fetchWeekly = async () => {
-            try {
-                const today = new Date();
-
-                const endDate = new Date(today);
-                endDate.setDate(today.getDate() - 1); 
-
-                const startDate = new Date(today);
-                startDate.setDate(today.getDate() - 7);
-
-                const response = await api.get("/sleep/tracker");
-                setHistoryData(response.data);
-              
-            } catch (error) {
-                console.error(error);
-            }
-        };          
-
         fetchToday();
-        fetchWeekly();
+        fetchLatest();
 
     }, [])
 
@@ -140,11 +131,10 @@ export default function DashboardAssessment() {
             const payload = {
                 wakeup, bedtime, sleepDuration, sleepEfficiency, awakenings, timeInBed, isGoodSleep
             };
-            console.log(payload);
-
             try {
                 const response = await api.post("/sleep/tracker", payload);
                 toast.success(response.data.message);
+                fetchLatest();
                 setAssessed(true);
             } catch (error) {
                 toast.error('A server error has occured');
@@ -178,7 +168,7 @@ export default function DashboardAssessment() {
                     <div className="flex flex-col gap-5">
                         <div className="flex flex-row gap-5">
                             <div className="flex flex-col flex-1 gap-2">
-                                <label className="text-sm font-semibold text-gray-700">
+                                <label className="text-sm font-semibold text-gray-800">
                                     Bedtime
                                 </label>
 
@@ -193,7 +183,7 @@ export default function DashboardAssessment() {
                             </div>
 
                             <div className="flex flex-col flex-1 gap-2">
-                                <label className="text-sm font-semibold text-gray-700">
+                                <label className="text-sm font-semibold text-gray-800">
                                     Wake-up Time
                                 </label>
 
@@ -211,7 +201,7 @@ export default function DashboardAssessment() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Sleep Duration (hours)
                         </label>
  
@@ -224,7 +214,7 @@ export default function DashboardAssessment() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Number of Awakenings
                         </label>
 
@@ -238,7 +228,7 @@ export default function DashboardAssessment() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-800">
                             Total Time in Bed (hours)
                         </label>
 

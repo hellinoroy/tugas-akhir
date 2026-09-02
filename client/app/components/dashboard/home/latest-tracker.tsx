@@ -2,9 +2,12 @@ import { Link } from "react-router";
 import type { Tracker, TrackerAPIProp } from "./tracker-card";
 import { useMemo } from "react";
 
-export default function LatestTracker( { data }: TrackerAPIProp ) {
+type LatestTrackerProps = TrackerAPIProp & {
+    desc?: string;
+};
 
-    console.log(data);
+export default function LatestTracker( { data, desc  }: LatestTrackerProps ) {
+
     const filtered = useMemo(() => {
         const map = new Map<string, Tracker>();
 
@@ -28,7 +31,11 @@ export default function LatestTracker( { data }: TrackerAPIProp ) {
             bg-white shadow-sm p-4 m    y-4
         ">
             <div className="flex flex-row justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Assessment History</h2>
+                <div className="flex flex-row items-end gap-2">
+                    <h2 className="text-2xl font-bold text-gray-800">Assessment History</h2>
+                    {desc && <p className="text-gray-500 text-sm">{desc}</p>}
+                </div>
+
                 <Link to="/dashboard/history" className="text-yellow-500">History</Link>
             </div>
             

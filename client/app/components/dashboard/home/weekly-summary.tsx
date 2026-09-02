@@ -13,7 +13,7 @@ import {
 import type { Tracker, TrackerAPIProp } from "./tracker-card";
 
 function timeToHours(time: string): number {
-    const [hours, minutes] = time.split(":").map(Number);
+    const [hours, minutes] = time.split("T")[1].split(":").map(Number); 
     return hours + minutes / 60;
 }
 
@@ -23,7 +23,7 @@ function standardDeviation(values: number[]): number {
     }
 
     const mean =
-        values.reduce((sum, value) => sum + value, 0) / values.length;
+        values.reduce((sum, value) => sum + value, 0) / values.length;  
 
     const variance =
         values.reduce(
@@ -47,24 +47,11 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
         let goodSleepDays = 0;
 
         for (const item of data?.items ?? []) {
-
-            const key = item.created_at.slice(0, 10);
-            const existing = map.get(key);
-
-            if (!existing) {
-                map.set(key, item);
-                continue;
-            }
-
-            if (
-                new Date(item.created_at).getTime() >
-                new Date(existing.created_at).getTime()
-            ) {
-                map.set(key, item);
-            }
+            const key = item.id!.toString();
+            map.set(key, item);
         }
 
-        map.forEach((item) => {
+            map.forEach((item) => {
             if (item.sleepDuration != null) {
                 sleepDurationValues.push(item.sleepDuration);
             }
@@ -137,7 +124,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                     <p className="mt-2 text-3xl font-bold text-gray-800">
                         {filtered.averageSleepDuration.toFixed(2)}
                         <span className="ml-1 text-base font-normal text-gray-500">
-                            hrs
+                            h
                         </span>
                     </p>
                 </div>
@@ -165,7 +152,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                         Good Sleep Days
                     </p>
 
-                    <p className="mt-2 text-3xl font-bold text-green-600">
+                    <p className="mt-2 text-3xl font-bold text-gray-800">
                         {filtered.goodSleepDays}
                         <span className="ml-1 text-base font-normal text-gray-500">
                             / {filtered.totalDays} days
@@ -182,7 +169,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                         Sleep Duration Standard Deviation
                     </p>
 
-                    <p className="mt-2 text-3xl font-bold text-green-600">
+                    <p className="mt-2 text-3xl font-bold text-gray-800">
                         {filtered.sleepDurationSD.toFixed(2)}
                     </p>
                 </div>
@@ -196,7 +183,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                         Wakup Standard Deviation
                     </p>
 
-                    <p className="mt-2 text-3xl font-bold text-green-600">
+                    <p className="mt-2 text-3xl font-bold text-gray-800">
                         {filtered.wakeupSD.toFixed(2)}
                     </p>
                 </div>
@@ -210,7 +197,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                         Bedtime Standard Deviation
                     </p>
 
-                    <p className="mt-2 text-3xl font-bold text-green-600">
+                    <p className="mt-2 text-3xl font-bold text-gray-800">
                         {filtered.bedtimeSD.toFixed(2)}
                     </p>
                 </div>
@@ -266,7 +253,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                                 labelFormatter={(value) => value?.toString().slice(0, 10)}
                                 formatter={(value) =>
                                     value !== null
-                                        ? [`${value} hrs`, "Sleep Duration"]
+                                        ? [`${value} h`, "Sleep Duration"]
                                         : ["No data", "Sleep Duration"]
                                 }
                             />

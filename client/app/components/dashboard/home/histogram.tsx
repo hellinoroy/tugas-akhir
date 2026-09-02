@@ -101,7 +101,7 @@ export default function SleepCharts() {
         {/* Age Chart */}
         <div className="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-5">
-            <h3 className="text-base font-semibold text-gray-900">
+            <h3 className="text-base font-semibold text-gray-500">
               Sleep Quality by Age
             </h3>
 
@@ -171,7 +171,7 @@ export default function SleepCharts() {
         {/* Gender Chart */}
         <div className="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-5">
-            <h3 className="text-base font-semibold text-gray-900">
+            <h3 className="text-base font-semibold text-gray-500">
               Sleep Quality by Gender
             </h3>
 

@@ -16,6 +16,7 @@ export default function DashboardHome() {
     const [trackerData, setTrackerData] = useState<Tracker>();
     const [historyData, setHistoryData] = useState<TrackerAPI>();
 
+    
     useEffect(() => {
         const fetchToday = async () => {
             const response = await api.get("/sleep/check-today-tracker");
@@ -27,7 +28,7 @@ export default function DashboardHome() {
                 const today = new Date();
 
                 const endDate = new Date(today);
-                endDate.setDate(today.getDate() - 1); 
+                endDate.setDate(today.getDate()); 
 
                 const startDate = new Date(today);
                 startDate.setDate(today.getDate() - 7);
@@ -56,7 +57,7 @@ export default function DashboardHome() {
                 <WeeklySummary data={ historyData } />
             </div>
             <SleepImprovementRecommendations data={ historyData } /> 
-            <LatestTracker data={ historyData } />
+            <LatestTracker data={ historyData } desc="Last 7 Days" />
             <Histogram />
         
         </div>
