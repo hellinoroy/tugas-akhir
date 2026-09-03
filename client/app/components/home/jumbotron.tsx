@@ -1,32 +1,33 @@
 import { MoonIcon } from "@heroicons/react/24/outline"
 import { Link } from "react-router"
 
-export default function Jumbotron() {
+export default function     Jumbotron() {
     return (
-        <section className="relative flex justify-center items-center h-[85vh] overflow-hidden">
-            <div className="absolute opacity-50 inset-0">
+        <section className="flex h-[85vh]">          
+            <div 
+                className="
+                    flex flex-row mx-20 gap-10 items-center
+                    lg:gap-40 xl:mx-30 2xl:mx-70
+                "
+            >
+                <div className="flex flex-col gap-5 justify-center">
+                    <h1 className="text-center font-bold text-5xl">Sleep better. Wake up better.</h1>
+                    <p className="text-xl text-slate-600 text-justify">
+                        Track your sleep, understand your habits, and discover what helps you rest at your best. Get simple insights into your sleep patterns so you can build healthier routines and wake up feeling refreshed.
+                    </p>
+                </div>
+                
                 <img 
-                    src="images/jp-valery-unsplash-bedroom-night.jpg" 
-                    alt="Bedroom" 
-                    className="w-full h-full object-cover" 
+                    className="
+                        w-[400px] h-[180px]
+                        xl:w-[600px] xl:h-[270px]
+                        hidden lg:inline
+                    "   
+                    src="images/sleep-illus-Photoroom.png" 
+                    alt="Sleeping Illustration"   
                 />
             </div>
-            
-            <div className="relative text-white text-center flex flex-col items-center gap-2">
-                <MoonIcon className="w-16 h-16 text-indigo-300 mx-auto mb-2 animate-pulse"/>
-                <h1 className="font-bold text-6xl">SleepWell</h1>
-                <h4 className="text-gray-500 text-2xl my-4">Transform your sleep, transform your life.</h4>
-                <div className="flex flex-row gap-5">
-                    <Link className="cursor-pointer rounded-xl bg-gray-700 py-3 px-8 mt-4 self-center w-40" to="/login">
-                        Login
-                    </Link>
-                    <a className="cursor-pointer rounded-xl bg-purple-950 py-3 px-8 mt-4 self-center w-40" href="#explain">
-                        Learn More
-                    </a>
-                </div>
-
-            </div>
-        </section>
+        </section>  
 
     )
 }
