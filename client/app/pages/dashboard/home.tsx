@@ -8,7 +8,6 @@ import SleepImprovementRecommendations from "~/components/dashboard/home/recomme
 
 import type { TrackerAPI, Tracker } from "~/components/dashboard/home/tracker-card";
 import WeeklySummary from "~/components/dashboard/home/weekly-summary";
-import Histogram from "~/components/dashboard/home/histogram";
 
 
 
@@ -28,17 +27,19 @@ export default function DashboardHome() {
                 const today = new Date();
 
                 const endDate = new Date(today);
-                endDate.setDate(today.getDate()); 
+                endDate.setDate(today.getDate() - 1); 
 
                 const startDate = new Date(today);
                 startDate.setDate(today.getDate() - 7);
-
+                console.log(endDate);
+                
                 const response = await api.get("/sleep/tracker", {
                     params: {
                         start_date: startDate.toISOString().split("T")[0],
                         end_date: endDate.toISOString().split("T")[0],
                     },
                 });
+                console.log(response.data);
                 setHistoryData(response.data);
               
             } catch (error) {
@@ -58,7 +59,6 @@ export default function DashboardHome() {
             </div>
             <SleepImprovementRecommendations data={ historyData } /> 
             <LatestTracker data={ historyData } desc="Last 7 Days" />
-            <Histogram />
         
         </div>
     );

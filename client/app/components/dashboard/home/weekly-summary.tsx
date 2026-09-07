@@ -234,7 +234,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                             />
 
                             <XAxis
-                                dataKey="created_at"
+                                dataKey="bedtime"
                                 tick={{ fontSize: 12 }}
                                 tickFormatter={(value) => value.slice(0, 10)}
                             />
@@ -250,10 +250,12 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
                             />
 
                             <Tooltip
-                                labelFormatter={(value) => value?.toString().slice(0, 10)}
+                                labelFormatter={(value) => 
+                                    typeof value === 'number' ? value.toFixed(2) : value
+                                }
                                 formatter={(value) =>
-                                    value !== null
-                                        ? [`${value} h`, "Sleep Duration"]
+                                    value !== null && value !== undefined
+                                        ? [`${Number(value).toFixed(2)} h`, "Sleep Duration"]
                                         : ["No data", "Sleep Duration"]
                                 }
                             />

@@ -91,7 +91,7 @@ export default function SleepCharts() {
     <div className="w-full flex flex-col gap-10 py-10">
       {/* Header */}
  
-    <p className="font-bold text-4xl text-center text-white">
+    <p className="font-bold text-4xl text-center">
         Overview of good and bad sleep based on age and gender.
     </p>
     
