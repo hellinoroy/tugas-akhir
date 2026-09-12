@@ -3,28 +3,35 @@ import { ClipboardDocumentListIcon, CpuChipIcon, ChartBarIcon } from '@heroicons
 
 export default function HowItWorks() {
     return (
-        <section className="flex flex-col justify-center items-center text-white bg-gray-900 py-10 gap-10">
+        <section 
+            className="
+                flex flex-col items-center my-10
+                mx-2 sm:mx-20 
+                xl:mx-30 2xl:mx-50 gap-5
+            "
+        >
+
             <h2 className="font-bold text-4xl">How It Works</h2>
-            <div className="flex flex-col gap-14 lg:flex-row px-10">
+            <div className="flex flex-col gap-5 lg:gap-14 lg:flex-row px-10">
                 <Cards 
                     icon={ClipboardDocumentListIcon}
                     number={1}
                     heading="Input Data"
-                    paragraph="Complete your lifestyle information, such as physical activity, sleep duration, stress levels, and more."
+                    paragraph="Enter your sleep information, including bedtime, wake-up time, sleep duration, and other relevant details."
                 />
 
                 <Cards 
                     icon={CpuChipIcon}
                     number={2}
                     heading="Automated Analysis"
-                    paragraph="The system analyzes the data using machine learning models to identify patterns that affect sleep quality."
+                    paragraph="Your sleep data is automatically analyzed to identify patterns, measure sleep quality, and evaluate your sleeping habits."
                 />
 
                 <Cards 
                     icon={ChartBarIcon}
                     number={3}
                     heading="Get Results & Insights"
-                    paragraph="View your sleep quality predictions along with the contributing factors and personalized recommendations."
+                    paragraph="Receive clear results and personalized insights that help you understand your sleep and make better decisions for healthier routines."
                 />
             </div>
             

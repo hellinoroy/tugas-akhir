@@ -4,7 +4,7 @@ export default function UnderstandSection() {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div 
+        <section 
             className="
                 flex flex-col items-center
                 mx-2 sm:mx-20 
@@ -12,14 +12,17 @@ export default function UnderstandSection() {
             "
             id="learn-more"
         >
-            <h1 className="text-center font-bold text-5xl">Understand your sleep</h1>
-            <p className="text-xl text-slate-600 text-justify">
-                Get a clearer picture of your sleep with simple, meaningful insights. Track your sleep duration, awakenings, sleep efficiency, and consistency over time to understand how well you’re resting and how your habits are changing.
+            <div className="flex flex-col gap-10">
+                <h2 className="text-center font-bold text-4xl">Understand your sleep</h2>
+                <p className="text-xl text-slate-600 text-justify">
+                    Get a clearer picture of your sleep with simple, meaningful insights. Track your sleep duration, awakenings, sleep efficiency, and consistency over time to understand how well you’re resting and how your habits are changing.
 
-                Your weekly overview makes it easy to spot patterns at a glance—whether you’re getting enough sleep, maintaining a consistent schedule, or noticing changes in your sleep quality. Instead of relying on how you feel each morning, use your data to understand what’s happening while you sleep.
-            </p>
+                    Your weekly overview makes it easy to spot patterns at a glance whether you’re getting enough sleep, maintaining a consistent schedule, or noticing changes in your sleep quality. Instead of relying on how you feel each morning, use your data to understand what’s happening while you sleep.
+                </p>
+            </div>
 
-            {/* Thumbnail Image */}
+
+            
             <img
                 src="images/dashboard.png" 
                 alt="dashboard" 
@@ -27,7 +30,6 @@ export default function UnderstandSection() {
                 onClick={() => setIsOpen(true)}
             />
 
-            {/* Lightbox / Popup Modal */}
             {isOpen && (
                 <div 
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
@@ -51,6 +53,6 @@ export default function UnderstandSection() {
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 }

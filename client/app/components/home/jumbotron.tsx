@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";  
 
-export default function     Jumbotron() {
+export default function Jumbotron() {
     return (
         <section className="flex min-h-screen">          
             <div 
@@ -9,7 +9,7 @@ export default function     Jumbotron() {
                     lg:gap-40 xl:mx-30 2xl:mx-50
                 "
             >
-                <div className="flex flex-col gap-5 justify-center items-center">
+                <div className="flex flex-col gap-10 justify-center items-center">
                     <h1 className="text-center font-bold text-5xl">Sleep better. Wake up better.</h1>
                     <p className="text-xl text-slate-600 text-justify">
                         Track your sleep, understand your habits, and discover what helps you rest at your best. Get simple insights into your sleep patterns so you can build healthier routines and wake up feeling refreshed.
