@@ -17,3 +17,10 @@ class UserProfileUpdate(BaseModel):
     dob: str
     gender: str
     
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    password: str
+
+    

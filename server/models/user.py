@@ -14,4 +14,5 @@ class User(Base):
 
     feedback = relationship("Feedback", back_populates="user")
     tracker = relationship("Tracker", back_populates="user")
+    forgot_password = relationship("ForgotPassword", back_populates="user")
 

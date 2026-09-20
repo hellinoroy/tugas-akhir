@@ -4,12 +4,14 @@ from fastapi import Cookie, Depends, Response, APIRouter, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database import get_db
-from schemas.auth import RegisterRequest, UserProfileUpdate
+from schemas.auth import ForgotPasswordRequest, RegisterRequest, ResetPasswordRequest, UserProfileUpdate
 
 from services.auth_service import (
     register, 
     login, 
-    logout, 
+    logout,
+    forgot_password,
+    reset_password,
     get_current_user, 
     remake_token,
     edit_profile
@@ -45,6 +47,14 @@ def signin(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
 @router.post("/logout", status_code=status.HTTP_200_OK)
 def signout(response: Response):
     return logout(response)
+
+@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+def forgot(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    return forgot_password(data, db)
+
+@router.post("/reset-password", status_code=status.HTTP_200_OK)
+def reset(data: ResetPasswordRequest, token: str, db: Session = Depends(get_db)):
+    return reset_password(data, token, db)
 
 @router.post("/refresh", status_code=status.HTTP_200_OK)
 def refresh(refresh_token: Annotated[str | None, Cookie()] = None):

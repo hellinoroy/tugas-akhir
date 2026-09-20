@@ -3,6 +3,7 @@ import { useState } from "react";
 import { api } from "~/root";
 import { useNavigate } from "react-router";
 import { Link } from 'react-router';
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function Register() {
             const response = await api.post("/auth/register", payload);
             navigate('/login');
         } catch (error: unknown) {
-
+            toast.error('An error has occured')
         }
     }
 
@@ -173,7 +174,19 @@ export default function Register() {
                     </p>
                 </div>
             </div>
-            
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
         </div>
     )
 }

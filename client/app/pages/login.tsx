@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from 'react-router';
 import { api } from "~/root";
 import { useNavigate } from "react-router";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function Login() {
             localStorage.setItem('access_token', response.data.access_token);
             navigate('/dashboard');
         } catch (error: unknown) {
+            toast.error('An error has occured')
         }
     }
 
@@ -93,6 +95,20 @@ export default function Login() {
                 </p>
             </div>
         </div>
+
+        <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+        />
     </div>
   
   );
