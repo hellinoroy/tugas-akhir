@@ -1,10 +1,10 @@
 import os
 
+from fastapi.responses import JSONResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from models.user import User
 from schemas.auth import ForgotPasswordRequest, RegisterRequest, ResetPasswordRequest, UserProfileUpdate
-from fastapi import  HTTPException, Response, status
+from fastapi import  HTTPException, Response, status, BackgroundTasks
 import secrets
 import smtplib
 from email.message import EmailMessage
@@ -14,7 +14,8 @@ from security import (
     create_token,
     check_token
 )
-from models.forgot_password import ForgotPassword
+from models.user import User
+from models.token import Token
 
 SMTP_HOST = os.getenv("SMTP_HOST")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
@@ -24,7 +25,8 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 def register(
     db: Session,
-    data: RegisterRequest
+    data: RegisterRequest,
+    background_tasks: BackgroundTasks
 ) :
     existing = (
         db.query(User)
@@ -51,15 +53,26 @@ def register(
     db.add(user)
     db.commit()
 
+    token = secrets.token_urlsafe(32)
+    verification_email = Token(
+        user_id=user.id,
+        token=token,
+    )
+
+    db.add(verification_email)
+    db.commit()
+    background_tasks.add_task(send_verification_email, user.email, user.name, token)
+
     return {
-        "message": "User created"
+        "message": "User created, please verifiy your email."
     }
 
 def login(
     response: Response,
     db: Session,
+    background_tasks: BackgroundTasks,
     email: str,
-    password: str
+    password: str,
 ):
     user = (
         db.query(User)
@@ -68,6 +81,24 @@ def login(
         )
         .first()
     )
+
+    if not user.email_verified:
+        token = secrets.token_urlsafe(32)
+        verification_email = Token(
+            user_id=user.id,
+            token=token,
+        )
+
+        db.add(verification_email)
+        db.commit()
+        background_tasks.add_task(send_verification_email, user.email, user.name, token)
+
+        return JSONResponse(
+            status_code=401,
+            content={
+                "message": "Please verify your email, a new one will be sent"
+            }
+        )
 
     if not user or not verify_password(password, user.password):
         raise HTTPException(
@@ -119,9 +150,9 @@ def forgot_password(data: ForgotPasswordRequest, db: Session):
 
     if user: 
         existing = (
-            db.query(ForgotPassword)
+            db.query(Token)
                 .filter(
-                    ForgotPassword.user_id == user.id 
+                    Token.user_id == user.id 
                 )
                 .all()
         )
@@ -130,7 +161,7 @@ def forgot_password(data: ForgotPasswordRequest, db: Session):
             db.delete(row)
 
     token = secrets.token_urlsafe(32)
-    forgot_password = ForgotPassword(
+    forgot_password = Token(
         user_id=user.id,
         token=token,
     )
@@ -171,41 +202,23 @@ def forgot_password(data: ForgotPasswordRequest, db: Session):
     return
 
 def reset_password(data: ResetPasswordRequest, token: str, db: Session):
-    db_token = (
-        db.query(ForgotPassword)
-        .filter(
-            ForgotPassword.token == token,
-            ForgotPassword.exp > func.now()
-        )
-        .first()
-    )
 
-    if not db_token:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid or expired reset token"
-        )
+    db_token, user = verify_email_token(token, db)
 
-    user = (
-        db.query(User)
-            .filter(
-                User.id == db_token.user_id
-            )
-            .first()
-    )
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-    
-    db.delete(db_token)
     user.password = hash_password(data.password)
-
+    db.delete(db_token)
     db.commit()
     return {
         "message": "Password changed"
+    }
+
+def verify_account(token: str, db: Session):
+    db_token, user = verify_email_token(token, db)
+    user.email_verified = True
+    db.delete(db_token)
+    db.commit()
+    return {
+        "message": "Email verified, you will be redirected shortly"
     }
 
 def edit_profile(
@@ -265,3 +278,69 @@ def remake_token(refresh_token):
         "message": "Refresh token success",
         "access_token": access_token
     }
+
+def send_verification_email(email: str, name: str, token: str):
+
+    reset_link = f"http://localhost:5173/verify-account?token={token}"
+
+    message = EmailMessage()
+    message["From"] = SMTP_USER
+    message["To"] = email
+    message["Subject"] = "Verify Your Email Address"
+    message.set_content(
+        f"""
+            Hello {name},
+
+            Thank you for signing up for SleepTrack.
+
+            Please click the link below to verify your email address:
+
+            {reset_link}
+
+            This link will expire in 10 minutes.
+
+            If you did not request this, you can ignore this email.
+
+            Regards,
+            SleepTrack
+        """
+    )
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASSWORD)
+        server.send_message(message)
+
+def verify_email_token(token:str, db: Session):
+    db_token = (
+        db.query(Token)
+        .filter(
+            Token.token == token,
+            Token.exp > func.now()
+        )
+        .first()
+    )
+
+    if not db_token:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired reset token"
+        )
+
+    user = (
+        db.query(User)
+            .filter(
+                User.id == db_token.user_id
+            )
+            .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+    
+    return db_token, user
+
+     

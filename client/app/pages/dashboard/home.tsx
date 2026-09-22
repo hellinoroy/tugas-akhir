@@ -39,7 +39,6 @@ export default function DashboardHome() {
                         end_date: endDate.toISOString().split("T")[0],
                     },
                 });
-                console.log(response.data);
                 setHistoryData(response.data);
               
             } catch (error) {

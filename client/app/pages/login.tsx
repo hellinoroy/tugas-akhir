@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { api } from "~/root";
 import { useNavigate } from "react-router";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -19,7 +20,13 @@ export default function Login() {
             const response = await api.post("/auth/login", params);
             localStorage.setItem('access_token', response.data.access_token);
             navigate('/dashboard');
-        } catch (error: unknown) {
+        } catch (error: any) {
+            console.log(error)
+            if(error.response?.status == 401) {
+                toast.warning(error.response?.data?.message || error.response?.data?.detail);
+                return
+            }
+            
             toast.error('An error has occured')
         }
     }

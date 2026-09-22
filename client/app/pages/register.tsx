@@ -30,7 +30,11 @@ export default function Register() {
         }
         try {
             const response = await api.post("/auth/register", payload);
-            navigate('/login');
+            toast.success(response.data.message);
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+            
         } catch (error: unknown) {
             toast.error('An error has occured')
         }

@@ -4,8 +4,8 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from database import Base
 
-class ForgotPassword(Base):
-    __tablename__ = "forgot_password"
+class Token(Base):
+    __tablename__ = "token"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
@@ -16,4 +16,4 @@ class ForgotPassword(Base):
         nullable=False,
     )
 
-    user = relationship("User", back_populates="forgot_password")
+    user = relationship("User", back_populates="token")

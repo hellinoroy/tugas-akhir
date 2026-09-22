@@ -13,6 +13,7 @@ export default [
     route("register", "./pages/register.tsx"),
     route("forgot-password", "./pages/forgot-password.tsx"),
     route("reset-password", "./pages/reset-password.tsx"),
+    route("verify-account", "./pages/verify-account.tsx"),
 
     route('dashboard', './pages/dashboard/boilerplate/root.tsx', {id: "dashboard-root"}, [
         index('./pages/dashboard/home.tsx'),
