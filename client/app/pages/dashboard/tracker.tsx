@@ -8,6 +8,7 @@ import TrackerCard from "~/components/dashboard/home/tracker-card";
 import LatestTracker from "~/components/dashboard/home/latest-tracker";
 import type { Tracker, TrackerAPI } from "~/components/dashboard/home/tracker-card";
 import { toast } from "react-toastify";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
 export default function DashboardAssessment() {
     
@@ -228,9 +229,22 @@ export default function DashboardAssessment() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-gray-800">
-                            Total Time in Bed (hours)
-                        </label>
+                        <div className="flex flex-row">
+                            <label className="text-sm font-semibold text-gray-800">
+                                Total Time in Bed (hours)
+                            </label>
+
+                            <div className="group relative">           
+                                <QuestionMarkCircleIcon className="size-4 font-bold" />
+
+                                <span className="absolute bottom-full left-1/2 z-20 mb-3 -translate-x-1/2 whitespace-nowrap rounded bg-slate-900 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none">
+                                    Total Time in Bed is the exact total duration from the moment you get into bed with the intention of sleeping until the moment you get out of bed to start your day.
+                                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                </span>
+
+                            </div>
+                        </div>
+
 
                         <input
                             type="number"
