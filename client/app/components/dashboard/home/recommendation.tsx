@@ -7,33 +7,18 @@ export default function SleepImprovementRecommendations( { data }: TrackerAPIPro
     const { age } = useContext(UserContext)!;
 
     const filtered = useMemo(() => {
+        console.log(data);
         const map = new Map<string, Tracker>();
 
         for (const item of data?.items ?? []) {
-            if (!item.created_at) {
-                continue;
-            }
-
-            const key = item.created_at.slice(0, 10);
-            const existing = map.get(key);
-
-            if (!existing) {
-                map.set(key, item);
-                continue;
-            }
-
-            if (
-                new Date(item.created_at).getTime() >
-                new Date(existing.created_at).getTime()
-            ) {
-                map.set(key, item);
-            }
+            const key = item.id!.toString();
+            map.set(key, item);
         }
 
         return [...map.values()].sort(
             (a, b) =>
-                new Date(a.created_at!).getTime() -
-                new Date(b.created_at!).getTime()
+                new Date(a.bedtime!).getTime() -
+                new Date(b.bedtime!).getTime()
         );
     }, [data]);
 
@@ -93,6 +78,8 @@ export default function SleepImprovementRecommendations( { data }: TrackerAPIPro
             failures: efficiencyFailures,
         },
     ];
+
+    // console.log(variables);
 
     const results = variables
         .map((item) => ({

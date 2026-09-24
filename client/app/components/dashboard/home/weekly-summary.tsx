@@ -51,7 +51,7 @@ export default function WeeklySummary( { data } : TrackerAPIProp ) {
             map.set(key, item);
         }
 
-            map.forEach((item) => {
+        map.forEach((item) => {
             if (item.sleepDuration != null) {
                 sleepDurationValues.push(item.sleepDuration);
             }
