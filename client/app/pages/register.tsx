@@ -18,8 +18,14 @@ export default function Register() {
     const handleRegister = async (e: React.SubmitEvent) => {
         e.preventDefault();
 
+        if(!email || !password || !dob || !gender) {
+            toast.error("Please fill out all field");
+            return;
+        }
+
         if(password != confirmPassword) {
-            return
+            toast.error("Password do not match");
+            return;
         }
         const payload = {
             'name': fullName,
@@ -35,7 +41,11 @@ export default function Register() {
                 navigate('/login');
             }, 2000);
             
-        } catch (error: unknown) {
+        } catch (error: any) {
+            if(error.response?.status == 409) {
+                toast.warning(error.response?.data?.message || error.response?.data?.detail);
+                return
+            }
             toast.error('An error has occured')
         }
     }

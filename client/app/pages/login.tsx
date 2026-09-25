@@ -21,7 +21,6 @@ export default function Login() {
             localStorage.setItem('access_token', response.data.access_token);
             navigate('/dashboard');
         } catch (error: any) {
-            console.log(error)
             if(error.response?.status == 401) {
                 toast.warning(error.response?.data?.message || error.response?.data?.detail);
                 return

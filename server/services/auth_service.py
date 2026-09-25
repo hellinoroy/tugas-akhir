@@ -39,7 +39,7 @@ def register(
     if existing:
         raise HTTPException(
             status_code=409, 
-            detail="Email exists"
+            detail="Email has been used"
         )
 
     user = User(
