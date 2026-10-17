@@ -236,7 +236,6 @@ def edit_profile(
         )
 
     user.name = data.name
-    user.email = data.email
     user.gender = data.gender
     user.dob = data.dob
 

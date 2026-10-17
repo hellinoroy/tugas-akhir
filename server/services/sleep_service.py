@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from schemas.sleep import TrackerRequest
 from models.tracker import Tracker 
 from datetime import datetime, timedelta, date
-from sqlalchemy import select, text, func
+from sqlalchemy import select, text, func, cast, Date
 # tidak ada role admin
 
 from security import (
@@ -23,8 +23,8 @@ def get_today_tracker(
         db.query(Tracker)
         .filter(
             Tracker.user_id == user_id,
-            Tracker.created_at >= start,
-            Tracker.created_at < end,
+            cast(Tracker.wakeup, Date) >= start,
+            cast(Tracker.wakeup, Date) < end
         )
         .first()
     )

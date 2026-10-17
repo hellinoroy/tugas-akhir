@@ -87,6 +87,7 @@ export default function DashboardAssessment() {
             try {
                 const response = await api.get("/sleep/check-today-tracker");
                 const data = response.data
+                console.log(data);
                 if(data) {
                     setBedtime(data.bedtime);
                     setWakeup(data.wakeup);

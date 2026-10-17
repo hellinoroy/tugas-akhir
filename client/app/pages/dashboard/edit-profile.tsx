@@ -3,7 +3,6 @@ import { api } from "~/root";
 
 export default function DashboardSetting() {
     const [name, setName] = useState<string>();
-    const [email, setEmail] = useState<string>();
     const [dob, setDob] = useState<string>();
     const [gender, setGender] = useState<string>();
     
@@ -12,7 +11,6 @@ export default function DashboardSetting() {
             const response = await api.get("/auth/me");
             const data = response.data;
             setName(data.name);
-            setEmail(data.email);
             setDob(data.dob);
             setGender(data.gender);
         }    
@@ -23,7 +21,7 @@ export default function DashboardSetting() {
         e.preventDefault();
 
         const payload = {
-            name, email, dob, gender, 
+            name, dob, gender, 
         };
         
         const response = await api.put("/auth/edit-profile", payload);
@@ -54,17 +52,6 @@ export default function DashboardSetting() {
                     />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-800">
-                    Email
-                    </label>
-                    <input 
-                        onChange={(e) => setEmail(e.target.value)}
-                        value={email}
-                        type="email" 
-                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-800 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-                    />
-                </div>
 
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-gray-800">

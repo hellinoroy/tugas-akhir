@@ -13,7 +13,6 @@ class LoginRequest(BaseModel):
     
 class UserProfileUpdate(BaseModel):
     name: str
-    email: EmailStr
     dob: str
     gender: str
     
